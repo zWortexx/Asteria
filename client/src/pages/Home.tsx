@@ -81,6 +81,7 @@ function Home() {
                 color="#3b7891"
                 accent="#9ed4bd"
                 textureUrl={getObject("earth")?.textureUrl}
+                planetId="earth"
                 globeKind="sphere"
                 motionEnabled={!staticView}
                 textureAlt="Textură a globului Pământului de la Observatorul Terestru NASA, redată pe un Pământ 3D rotativ"

@@ -130,6 +130,7 @@ function ObjectPage({ item }: { item: AstroObject }) {
               color={item.color}
               accent={item.accent}
               textureUrl={item.textureUrl}
+              planetId={item.id}
               textureAlt={item.alt}
               globeKind={item.globeKind}
               motionEnabled={!staticView}

@@ -50,6 +50,7 @@
 }
 .celestial-globe-fallback {
   position: absolute;
+  z-index: 0;
   inset: 18% 25%;
   border-radius: 50%;
   background: radial-gradient(
@@ -59,9 +60,11 @@
     #0c1716 76%
   );
   opacity: 0.9;
+  pointer-events: none;
 }
 .celestial-globe-notice {
   position: absolute;
+  z-index: 2;
   left: 14px;
   bottom: 8px;
   max-width: 220px;

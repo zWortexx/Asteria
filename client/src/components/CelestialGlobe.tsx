@@ -7,8 +7,51 @@ type CelestialGlobeProps = {
   textureUrl?: string;
   textureAlt?: string;
   globeKind?: GlobeKind;
+  planetId?: string;
   motionEnabled?: boolean;
   size?: "hero" | "detail" | "step";
+};
+
+type PlanetProfile = {
+  base: [number, number, number];
+  accent: [number, number, number];
+  atmosphere: string;
+  ring?: { inner: number; outer: number; color: string; opacity: number };
+};
+
+const planetProfiles: Record<string, PlanetProfile> = {
+  mars: {
+    base: [156, 57, 38],
+    accent: [235, 152, 91],
+    atmosphere: "#e9a16d",
+  },
+  earth: {
+    base: [20, 74, 101],
+    accent: [83, 156, 105],
+    atmosphere: "#9ed4bd",
+  },
+  moon: {
+    base: [132, 128, 119],
+    accent: [215, 209, 192],
+    atmosphere: "#d7d1c0",
+  },
+  jupiter: {
+    base: [169, 126, 83],
+    accent: [228, 191, 135],
+    atmosphere: "#e8c896",
+  },
+  saturn: {
+    base: [184, 151, 99],
+    accent: [241, 211, 155],
+    atmosphere: "#f1d39c",
+    ring: { inner: 1.02, outer: 1.78, color: "#e4c28c", opacity: 0.72 },
+  },
+  uranus: {
+    base: [91, 166, 172],
+    accent: [176, 225, 219],
+    atmosphere: "#b0e1dc",
+    ring: { inner: 1.02, outer: 1.52, color: "#b1d8d4", opacity: 0.42 },
+  },
 };
 
 const getDpr = () =>
@@ -16,12 +59,122 @@ const getDpr = () =>
     ? Math.min(window.devicePixelRatio, 1.5)
     : Math.min(window.devicePixelRatio, 2);
 
+const clamp = (value: number) => Math.max(0, Math.min(255, value));
+const mix = (a: number, b: number, amount: number) => a + (b - a) * amount;
+const noise = (x: number, y: number, seed: number) => {
+  const value = Math.sin(x * 12.9898 + y * 78.233 + seed * 37.719) * 43758.5453;
+  return value - Math.floor(value);
+};
+
+function createPlanetTexture(
+  THREE: typeof import("three"),
+  planetId: string,
+  profile: PlanetProfile
+) {
+  const width = 256;
+  const height = 128;
+  const pixels = new Uint8Array(width * height * 4);
+  const [r, g, b] = profile.base;
+  const [ar, ag, ab] = profile.accent;
+
+  for (let y = 0; y < height; y += 1) {
+    const latitude = y / (height - 1);
+    const latitudeShade = 0.78 + Math.sin(latitude * Math.PI) * 0.22;
+    for (let x = 0; x < width; x += 1) {
+      const u = x / width;
+      const v = latitude;
+      const grain = noise(u * 17, v * 13, planetId.length) - 0.5;
+      let rr = r;
+      let gg = g;
+      let bb = b;
+
+      if (planetId === "earth") {
+        const land =
+          Math.sin(u * 18 + Math.sin(v * 12) * 1.5) +
+            Math.cos(v * 25 - u * 9) +
+            noise(u * 8, v * 8, 4) * 1.8 >
+          1.45;
+        if (land) {
+          rr = mix(r, 74, 0.75);
+          gg = mix(g, 142, 0.76);
+          bb = mix(b, 78, 0.8);
+        }
+        if (noise(u * 42, v * 24, 9) > 0.81) {
+          rr = mix(rr, 235, 0.54);
+          gg = mix(gg, 245, 0.54);
+          bb = mix(bb, 238, 0.54);
+        }
+      } else if (planetId === "mars") {
+        const darkTerrain = noise(u * 11, v * 9, 2) > 0.62;
+        rr = darkTerrain ? 132 : r;
+        gg = darkTerrain ? 47 : g;
+        bb = darkTerrain ? 35 : b;
+        if (noise(u * 65, v * 34, 8) > 0.91) {
+          rr = mix(rr, 84, 0.38);
+          gg = mix(gg, 32, 0.38);
+          bb = mix(bb, 27, 0.38);
+        }
+      } else if (planetId === "moon") {
+        const crater = noise(u * 31, v * 18, 6);
+        const shade = crater > 0.74 ? 0.52 : crater > 0.62 ? 0.78 : 1;
+        rr *= shade;
+        gg *= shade;
+        bb *= shade;
+      } else if (planetId === "jupiter" || planetId === "saturn") {
+        const bands = Math.sin(
+          v * Math.PI * (planetId === "jupiter" ? 17 : 13)
+        );
+        const bandAmount = bands > 0 ? 0.2 : -0.12;
+        rr = mix(r, ar, 0.32 + bandAmount);
+        gg = mix(g, ag, 0.28 + bandAmount);
+        bb = mix(b, ab, 0.26 + bandAmount);
+        const turbulence = noise(u * 16, v * 34, 11);
+        rr += turbulence * 24 - 10;
+        gg += turbulence * 18 - 8;
+        bb += turbulence * 12 - 5;
+        if (planetId === "jupiter") {
+          const dx = Math.abs(((u - 0.69 + 0.5) % 1) - 0.5) * 2;
+          const dy = Math.abs(v - 0.61) * 3.1;
+          if (dx * dx + dy * dy < 0.2) {
+            rr = 191;
+            gg = 82;
+            bb = 54;
+          }
+        }
+      } else if (planetId === "uranus") {
+        const bands = Math.sin(v * Math.PI * 11) * 0.12;
+        rr = mix(r, ar, 0.45 + bands);
+        gg = mix(g, ag, 0.45 + bands);
+        bb = mix(b, ab, 0.45 + bands);
+      }
+
+      const index = (y * width + x) * 4;
+      pixels[index] = clamp(rr * latitudeShade + grain * 8);
+      pixels[index + 1] = clamp(gg * latitudeShade + grain * 8);
+      pixels[index + 2] = clamp(bb * latitudeShade + grain * 8);
+      pixels[index + 3] = 255;
+    }
+  }
+
+  const texture = new THREE.DataTexture(
+    pixels,
+    width,
+    height,
+    THREE.RGBAFormat
+  );
+  texture.colorSpace = THREE.SRGBColorSpace;
+  texture.wrapS = THREE.RepeatWrapping;
+  texture.needsUpdate = true;
+  return texture;
+}
+
 export default function CelestialGlobe({
   color,
   accent,
   textureUrl,
   textureAlt,
   globeKind = "sphere",
+  planetId,
   motionEnabled = true,
   size = "detail",
 }: CelestialGlobeProps) {
@@ -40,6 +193,7 @@ export default function CelestialGlobe({
     let texture: import("three").Texture | undefined;
     const disposables: Array<{ dispose: () => void }> = [];
     const animatedGroups: Array<{ rotation: { y: number } }> = [];
+    const profile = planetId ? planetProfiles[planetId] : undefined;
     const setFallback = (message: string) => {
       if (!disposed) setNotice(message);
     };
@@ -71,17 +225,6 @@ export default function CelestialGlobe({
       );
       scene.add(group);
       animatedGroups.push(group);
-      const materialBase = new THREE.MeshStandardMaterial({
-        color: new THREE.Color(color),
-        roughness: 0.72,
-        metalness: 0.04,
-      });
-      const rimMaterial = new THREE.MeshBasicMaterial({
-        color: new THREE.Color(accent),
-        transparent: true,
-        opacity: 0.18,
-        side: THREE.BackSide,
-      });
       const add = (object: import("three").Object3D) => group.add(object);
       const addGeometry = (geometry: import("three").BufferGeometry) => {
         disposables.push(geometry);
@@ -133,13 +276,14 @@ export default function CelestialGlobe({
         );
         group.rotation.x = -0.3;
       } else if (globeKind === "star") {
-        const star = new THREE.Mesh(
-          addGeometry(new THREE.SphereGeometry(0.55, 32, 32)),
-          addMaterial(
-            new THREE.MeshBasicMaterial({ color: new THREE.Color(accent) })
+        add(
+          new THREE.Mesh(
+            addGeometry(new THREE.SphereGeometry(0.55, 32, 32)),
+            addMaterial(
+              new THREE.MeshBasicMaterial({ color: new THREE.Color(accent) })
+            )
           )
         );
-        add(star);
         add(
           new THREE.Mesh(
             addGeometry(new THREE.SphereGeometry(0.82, 32, 32)),
@@ -177,31 +321,21 @@ export default function CelestialGlobe({
             )
           )
         );
-        const linePositions = new Float32Array([
-          -0.8, 0, 0, 0, 0.4, 0, 0.8, 0, 0, -0.6, 0, 0, 0, 0.6, 0,
-        ]);
-        const lineGeometry = addGeometry(new THREE.BufferGeometry());
-        lineGeometry.setAttribute(
-          "position",
-          new THREE.Float32BufferAttribute(linePositions, 3)
-        );
-        add(
-          new THREE.LineSegments(
-            lineGeometry,
-            addMaterial(
-              new THREE.LineBasicMaterial({
-                color: new THREE.Color(color),
-                transparent: true,
-                opacity: 0.6,
-              })
-            )
-          )
-        );
       } else {
-        const geometry = addGeometry(new THREE.SphereGeometry(1, 48, 48));
-        const material = addMaterial(materialBase);
-        add(new THREE.Mesh(geometry, material));
-        if (textureUrl) {
+        const material = addMaterial(
+          new THREE.MeshStandardMaterial({
+            color: profile ? 0xffffff : new THREE.Color(color),
+            roughness: planetId === "moon" ? 0.95 : 0.72,
+            metalness: 0.02,
+          })
+        );
+        const surface = addGeometry(new THREE.SphereGeometry(1, 64, 48));
+        add(new THREE.Mesh(surface, material));
+        if (profile) {
+          texture = createPlanetTexture(THREE, planetId!, profile);
+          material.map = texture;
+          material.needsUpdate = true;
+        } else if (textureUrl) {
           const loader = new THREE.TextureLoader();
           loader.setCrossOrigin("anonymous");
           loader.load(
@@ -221,9 +355,44 @@ export default function CelestialGlobe({
             () => setFallback("Textura nu s-a putut încărca.")
           );
         }
+        if (profile) {
+          const atmosphere = new THREE.Mesh(
+            addGeometry(new THREE.SphereGeometry(1.075, 48, 32)),
+            addMaterial(
+              new THREE.MeshBasicMaterial({
+                color: new THREE.Color(profile.atmosphere),
+                transparent: true,
+                opacity: planetId === "moon" ? 0.04 : 0.13,
+                side: THREE.BackSide,
+              })
+            )
+          );
+          add(atmosphere);
+          if (profile.ring) {
+            const ring = new THREE.Mesh(
+              addGeometry(
+                new THREE.RingGeometry(
+                  profile.ring.inner,
+                  profile.ring.outer,
+                  128
+                )
+              ),
+              addMaterial(
+                new THREE.MeshBasicMaterial({
+                  color: new THREE.Color(profile.ring.color),
+                  transparent: true,
+                  opacity: profile.ring.opacity,
+                  side: THREE.DoubleSide,
+                })
+              )
+            );
+            ring.rotation.x = Math.PI / 2.35;
+            add(ring);
+          }
+        }
       }
 
-      if (globeKind !== "star") {
+      if (globeKind !== "star" && !profile) {
         const rim = new THREE.Mesh(
           addGeometry(
             new THREE.SphereGeometry(
@@ -232,7 +401,14 @@ export default function CelestialGlobe({
               32
             )
           ),
-          addMaterial(rimMaterial)
+          addMaterial(
+            new THREE.MeshBasicMaterial({
+              color: new THREE.Color(accent),
+              transparent: true,
+              opacity: 0.18,
+              side: THREE.BackSide,
+            })
+          )
         );
         add(rim);
       }
@@ -289,7 +465,7 @@ export default function CelestialGlobe({
         stop = document.hidden;
       };
       document.addEventListener("visibilitychange", onVisibility);
-      const render = (time: number) => {
+      const render = () => {
         if (!disposed) frame = requestAnimationFrame(render);
         if (!renderer || !scene || !camera || stop) return;
         if (motionEnabled) {
@@ -316,7 +492,7 @@ export default function CelestialGlobe({
       if (renderer?.domElement.parentNode === mount)
         mount.removeChild(renderer.domElement);
     };
-  }, [accent, color, globeKind, motionEnabled, size, textureUrl]);
+  }, [accent, color, globeKind, motionEnabled, planetId, size, textureUrl]);
 
   return (
     <div

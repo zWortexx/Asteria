@@ -90,6 +90,7 @@ function RouteDetail({ route }: { route: AstroRoute }) {
               color={active.color}
               accent={active.accent}
               textureUrl={active.textureUrl}
+              planetId={active.id}
               textureAlt={active.alt}
               globeKind={active.globeKind}
               motionEnabled={!staticView}
