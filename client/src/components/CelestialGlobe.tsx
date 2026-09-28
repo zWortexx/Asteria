@@ -59,6 +59,13 @@ const getDpr = () =>
     ? Math.min(window.devicePixelRatio, 1.5)
     : Math.min(window.devicePixelRatio, 2);
 
+const planetModelUrls: Record<string, string> = {
+  mars: "/manus-storage/mars_3e4fdb3f.glb",
+  moon: "/manus-storage/moon_b188d926.glb",
+  jupiter: "/manus-storage/jupiter_48530f41.glb",
+  saturn: "/manus-storage/saturn_8bf7f89b.glb",
+};
+
 export default function CelestialGlobe({
   color,
   accent,
@@ -85,6 +92,7 @@ export default function CelestialGlobe({
     const disposables: Array<{ dispose: () => void }> = [];
     const animatedGroups: Array<{ rotation: { y: number } }> = [];
     const profile = planetId ? planetProfiles[planetId] : undefined;
+    const modelUrl = planetId ? planetModelUrls[planetId] : undefined;
     const setFallback = (message: string) => {
       if (!disposed) setNotice(message);
     };
@@ -115,6 +123,9 @@ export default function CelestialGlobe({
       group.scale.setScalar(
         size === "hero" ? 0.66 : size === "step" ? 0.78 : 0.76
       );
+      if (planetId === "saturn" && modelUrl) {
+        group.rotation.x = Math.PI / 5.4;
+      }
       scene.add(group);
       animatedGroups.push(group);
       const add = (object: import("three").Object3D) => group.add(object);
@@ -127,7 +138,80 @@ export default function CelestialGlobe({
         return material;
       };
 
-      if (globeKind === "galaxy") {
+      if (modelUrl) {
+        const { GLTFLoader } = await import(
+          "three/examples/jsm/loaders/GLTFLoader.js"
+        );
+        const loader = new GLTFLoader();
+        loader.load(
+          modelUrl,
+          gltf => {
+            if (disposed) return;
+            const model = gltf.scene;
+            model.updateMatrixWorld(true);
+            const initialBounds = new THREE.Box3().setFromObject(model);
+            const dimensions = initialBounds.getSize(new THREE.Vector3());
+            const largestDimension = Math.max(
+              dimensions.x,
+              dimensions.y,
+              dimensions.z
+            );
+            model.scale.setScalar(1.46 / Math.max(largestDimension, 0.001));
+            model.updateMatrixWorld(true);
+            const centeredBounds = new THREE.Box3().setFromObject(model);
+            model.position.sub(centeredBounds.getCenter(new THREE.Vector3()));
+            model.traverse(object => {
+              if (object instanceof THREE.Mesh) {
+                object.frustumCulled = false;
+                object.castShadow = false;
+                object.receiveShadow = false;
+                const materials = Array.isArray(object.material)
+                  ? object.material
+                  : [object.material];
+                const preparedMaterials = materials.map(material => {
+                  if (planetId === "saturn" && /ring/i.test(material.name)) {
+                    return new THREE.MeshBasicMaterial({
+                      map: material.map,
+                      color: material.color,
+                      transparent: true,
+                      opacity: 0.96,
+                      alphaTest: 0.01,
+                      depthWrite: false,
+                      side: THREE.DoubleSide,
+                    });
+                  }
+                  material.side = THREE.DoubleSide;
+                  return material;
+                });
+                object.material =
+                  preparedMaterials.length === 1
+                    ? preparedMaterials[0]
+                    : preparedMaterials;
+              }
+            });
+            group.add(model);
+            animatedGroups.push(model);
+            disposables.push({
+              dispose: () => {
+                model.traverse(object => {
+                  if (object instanceof THREE.Mesh) {
+                    object.geometry.dispose();
+                    const materials = Array.isArray(object.material)
+                      ? object.material
+                      : [object.material];
+                    materials.forEach(material => {
+                      material.map?.dispose();
+                      material.dispose();
+                    });
+                  }
+                });
+              },
+            });
+          },
+          undefined,
+          () => setFallback("Modelul 3D NASA nu s-a putut încărca.")
+        );
+      } else if (globeKind === "galaxy") {
         const points: number[] = [];
         for (let i = 0; i < 520; i += 1) {
           const arm = i % 4;
