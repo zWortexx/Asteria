@@ -59,183 +59,6 @@ const getDpr = () =>
     ? Math.min(window.devicePixelRatio, 1.5)
     : Math.min(window.devicePixelRatio, 2);
 
-const clamp = (value: number) => Math.max(0, Math.min(255, value));
-const mix = (a: number, b: number, amount: number) => a + (b - a) * amount;
-const noise = (x: number, y: number, seed: number) => {
-  const value = Math.sin(x * 12.9898 + y * 78.233 + seed * 37.719) * 43758.5453;
-  return value - Math.floor(value);
-};
-
-function createPlanetTexture(
-  THREE: typeof import("three"),
-  planetId: string,
-  profile: PlanetProfile
-) {
-  const width = 256;
-  const height = 128;
-  const pixels = new Uint8Array(width * height * 4);
-  const [r, g, b] = profile.base;
-  const [ar, ag, ab] = profile.accent;
-
-  for (let y = 0; y < height; y += 1) {
-    const latitude = y / (height - 1);
-    const latitudeShade = 0.78 + Math.sin(latitude * Math.PI) * 0.22;
-    for (let x = 0; x < width; x += 1) {
-      const u = x / width;
-      const v = latitude;
-      const grain = noise(u * 17, v * 13, planetId.length) - 0.5;
-      let rr = r;
-      let gg = g;
-      let bb = b;
-
-      if (planetId === "earth") {
-        const land =
-          Math.sin(u * 18 + Math.sin(v * 12) * 1.5) +
-            Math.cos(v * 25 - u * 9) +
-            noise(u * 8, v * 8, 4) * 1.8 >
-          1.45;
-        if (land) {
-          rr = mix(r, 74, 0.75);
-          gg = mix(g, 142, 0.76);
-          bb = mix(b, 78, 0.8);
-        }
-        if (noise(u * 42, v * 24, 9) > 0.81) {
-          rr = mix(rr, 235, 0.54);
-          gg = mix(gg, 245, 0.54);
-          bb = mix(bb, 238, 0.54);
-        }
-      } else if (planetId === "mars") {
-        const darkTerrain = noise(u * 11, v * 9, 2) > 0.62;
-        rr = darkTerrain ? 132 : r;
-        gg = darkTerrain ? 47 : g;
-        bb = darkTerrain ? 35 : b;
-        if (noise(u * 65, v * 34, 8) > 0.91) {
-          rr = mix(rr, 84, 0.38);
-          gg = mix(gg, 32, 0.38);
-          bb = mix(bb, 27, 0.38);
-        }
-      } else if (planetId === "moon") {
-        const crater = noise(u * 31, v * 18, 6);
-        const shade = crater > 0.74 ? 0.52 : crater > 0.62 ? 0.78 : 1;
-        rr *= shade;
-        gg *= shade;
-        bb *= shade;
-      } else if (planetId === "jupiter" || planetId === "saturn") {
-        const bands = Math.sin(
-          v * Math.PI * (planetId === "jupiter" ? 17 : 13)
-        );
-        const bandAmount = bands > 0 ? 0.2 : -0.12;
-        rr = mix(r, ar, 0.32 + bandAmount);
-        gg = mix(g, ag, 0.28 + bandAmount);
-        bb = mix(b, ab, 0.26 + bandAmount);
-        const turbulence = noise(u * 16, v * 34, 11);
-        rr += turbulence * 24 - 10;
-        gg += turbulence * 18 - 8;
-        bb += turbulence * 12 - 5;
-        if (planetId === "jupiter") {
-          const dx = Math.abs(((u - 0.69 + 0.5) % 1) - 0.5) * 2;
-          const dy = Math.abs(v - 0.61) * 3.1;
-          if (dx * dx + dy * dy < 0.2) {
-            rr = 191;
-            gg = 82;
-            bb = 54;
-          }
-        }
-      } else if (planetId === "uranus") {
-        const bands = Math.sin(v * Math.PI * 11) * 0.12;
-        rr = mix(r, ar, 0.45 + bands);
-        gg = mix(g, ag, 0.45 + bands);
-        bb = mix(b, ab, 0.45 + bands);
-      }
-
-      const index = (y * width + x) * 4;
-      pixels[index] = clamp(rr * latitudeShade + grain * 8);
-      pixels[index + 1] = clamp(gg * latitudeShade + grain * 8);
-      pixels[index + 2] = clamp(bb * latitudeShade + grain * 8);
-      pixels[index + 3] = 255;
-    }
-  }
-
-  const texture = new THREE.DataTexture(
-    pixels,
-    width,
-    height,
-    THREE.RGBAFormat
-  );
-  texture.colorSpace = THREE.SRGBColorSpace;
-  texture.wrapS = THREE.RepeatWrapping;
-  texture.needsUpdate = true;
-  return texture;
-}
-
-function createPhotoTexture(
-  THREE: typeof import("three"),
-  image: HTMLImageElement,
-  planetId: string,
-  profile: PlanetProfile
-) {
-  void profile;
-  const size = 512;
-  const canvas = document.createElement("canvas");
-  canvas.width = size;
-  canvas.height = size;
-  const context = canvas.getContext("2d");
-  if (!context) return null;
-  const imageWidth = image.naturalWidth || image.width;
-  const imageHeight = image.naturalHeight || image.height;
-  const smallest = Math.min(imageWidth, imageHeight);
-  const cropSize = planetId === "saturn" ? smallest * 0.48 : smallest;
-  const cropX = (imageWidth - cropSize) / 2;
-  const cropY = (imageHeight - cropSize) / 2;
-  context.drawImage(image, cropX, cropY, cropSize, cropSize, 0, 0, size, size);
-  const texture = new THREE.CanvasTexture(canvas);
-  texture.colorSpace = THREE.SRGBColorSpace;
-  texture.needsUpdate = true;
-  return texture;
-}
-
-function createProjectedPhotoMaterial(
-  THREE: typeof import("three"),
-  texture: import("three").Texture,
-  planetId: string
-) {
-  return new THREE.ShaderMaterial({
-    uniforms: {
-      uMap: { value: texture },
-      uOpacity: { value: planetId === "saturn" ? 0.18 : 0.36 },
-    },
-    transparent: true,
-    depthWrite: false,
-    vertexShader: `
-      varying vec3 vLocalPosition;
-      varying vec3 vLocalNormal;
-      void main() {
-        vLocalPosition = position;
-        vLocalNormal = normal;
-        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-      }
-    `,
-    fragmentShader: `
-      uniform sampler2D uMap;
-      uniform float uOpacity;
-      varying vec3 vLocalPosition;
-      varying vec3 vLocalNormal;
-      void main() {
-        vec3 normal = normalize(vLocalNormal);
-        float facing = smoothstep(0.02, 0.34, normal.z);
-        vec2 uv = vec2(0.5 + vLocalPosition.x * 0.5, 0.5 - vLocalPosition.y * 0.5);
-        vec4 photo = texture2D(uMap, clamp(uv, 0.0, 1.0));
-        float luminance = dot(photo.rgb, vec3(0.2126, 0.7152, 0.0722));
-        float photoMask = smoothstep(0.02, 0.14, luminance);
-        float alpha = facing * photoMask * uOpacity;
-        if (alpha < 0.01) discard;
-        float light = 0.72 + max(normal.z, 0.0) * 0.28;
-        gl_FragColor = vec4(photo.rgb * light, alpha);
-      }
-    `,
-  });
-}
-
 export default function CelestialGlobe({
   color,
   accent,
@@ -392,21 +215,17 @@ export default function CelestialGlobe({
         );
       } else {
         const material = addMaterial(
-          new THREE.MeshStandardMaterial({
-            color: new THREE.Color(color),
-            roughness: planetId === "moon" ? 0.95 : 0.72,
-            metalness: 0.02,
-          })
+          textureUrl
+            ? new THREE.MeshBasicMaterial({ color: 0xffffff })
+            : new THREE.MeshStandardMaterial({
+                color: new THREE.Color(color),
+                roughness: planetId === "moon" ? 0.95 : 0.72,
+                metalness: 0.02,
+              })
         );
         const surface = addGeometry(new THREE.SphereGeometry(1, 64, 48));
-        add(new THREE.Mesh(surface, material));
-        if (profile) {
-          const generated = createPlanetTexture(THREE, planetId!, profile);
-          disposables.push(generated);
-          material.map = generated;
-          material.color.set(0xffffff);
-          material.needsUpdate = true;
-        }
+        const planetMesh = new THREE.Mesh(surface, material);
+        add(planetMesh);
         if (textureUrl) {
           const loader = new THREE.TextureLoader();
           loader.setCrossOrigin("anonymous");
@@ -417,27 +236,15 @@ export default function CelestialGlobe({
                 loaded.dispose();
                 return;
               }
-              const photoTexture = profile
-                ? createPhotoTexture(
-                    THREE,
-                    loaded.image,
-                    planetId ?? "",
-                    profile
-                  )
-                : null;
-              loaded.dispose();
-              if (!photoTexture) return;
-              disposables.push(photoTexture);
-              const photoMaterial = addMaterial(
-                createProjectedPhotoMaterial(
-                  THREE,
-                  photoTexture,
-                  planetId ?? ""
-                )
-              );
-              const photoSurface = new THREE.Mesh(surface, photoMaterial);
-              photoSurface.renderOrder = 2;
-              add(photoSurface);
+              loaded.colorSpace = THREE.SRGBColorSpace;
+              loaded.anisotropy =
+                renderer?.capabilities.getMaxAnisotropy() ?? 1;
+              loaded.minFilter = THREE.LinearMipmapLinearFilter;
+              loaded.magFilter = THREE.LinearFilter;
+              disposables.push(loaded);
+              material.map = loaded;
+              material.color.set(0xffffff);
+              material.needsUpdate = true;
             },
             undefined,
             () => {
@@ -447,7 +254,7 @@ export default function CelestialGlobe({
             }
           );
         }
-        if (profile) {
+        if (profile && !textureUrl) {
           const atmosphere = new THREE.Mesh(
             addGeometry(new THREE.SphereGeometry(1.075, 48, 32)),
             addMaterial(
@@ -478,7 +285,7 @@ export default function CelestialGlobe({
                 })
               )
             );
-            ring.rotation.x = Math.PI / 2.35;
+            ring.rotation.x = Math.PI / 4.6;
             add(ring);
           }
         }
