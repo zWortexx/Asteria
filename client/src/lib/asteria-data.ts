@@ -122,8 +122,9 @@ export const objects: AstroObject[] = [
     coordinates: { left: "27%", top: "46%", size: "clamp(132px, 18vw, 240px)" },
     related: ["earth", "moon", "scale-in-space"],
     source: "NASA · Explorarea Sistemului Solar · Prezentare Marte",
-    imageUrl: "https://photojournal.jpl.nasa.gov/jpeg/PIA00407.jpg",
-    imageCredit: "NASA/JPL-Caltech",
+    imageUrl: "/manus-storage/OSIRIS_Mars_true_color_7cba96d4.jpg",
+    textureUrl: "/manus-storage/OSIRIS_Mars_true_color_7cba96d4.jpg",
+    imageCredit: "Colecția furnizată · NASA/JPL-Caltech",
     mission: {
       category: "Planete",
       type: "planet",
@@ -165,7 +166,6 @@ export const objects: AstroObject[] = [
     source: "Observatorul Terestru NASA · Date despre Pământ",
     imageUrl:
       "https://eoimages.gsfc.nasa.gov/images/imagerecords/57000/57730/globe_west_2048.jpg",
-    textureUrl: "/textures/earth-globe.jpg",
     imageCredit: "Observatorul Terestru NASA",
   }),
   record({
@@ -196,9 +196,9 @@ export const objects: AstroObject[] = [
     coordinates: { left: "53%", top: "28%", size: "clamp(72px, 10vw, 126px)" },
     related: ["earth", "mars", "light-travel-time"],
     source: "NASA · Fișa informativă a Lunii",
-    imageUrl:
-      "https://assets.science.nasa.gov/dynamicimage/assets/science/cds/general/images/2023/07/27410471634-20aa91b309-o.jpg",
-    imageCredit: "NASA / Stația Spațială Internațională",
+    imageUrl: "/manus-storage/FullMoon2010_6323acc3.jpg",
+    textureUrl: "/manus-storage/FullMoon2010_6323acc3.jpg",
+    imageCredit: "Colecția furnizată · NASA",
   }),
   record({
     id: "sirius",
@@ -423,6 +423,11 @@ export const objects: AstroObject[] = [
       related: ["saturn", "mars", "scale-in-space"],
       source: "NASA · Date despre Jupiter",
       sourceUrl: "https://science.nasa.gov/jupiter/jupiter-facts/",
+      imageUrl:
+        "/manus-storage/Jupiter_and_its_shrunken_Great_Red_Spot_2fdf9f3c.jpg",
+      textureUrl:
+        "/manus-storage/Jupiter_and_its_shrunken_Great_Red_Spot_2fdf9f3c.jpg",
+      imageCredit: "Colecția furnizată · NASA/JPL-Caltech/SwRI/MSSS",
       mission: {
         category: "Planete",
         type: "planet",
@@ -466,6 +471,9 @@ export const objects: AstroObject[] = [
       related: ["jupiter", "moon", "scale-in-space"],
       source: "NASA · Date despre Saturn",
       sourceUrl: "https://science.nasa.gov/saturn/facts/",
+      imageUrl: "/manus-storage/Saturn_during_Equinox_76d6b2d7.jpg",
+      textureUrl: "/manus-storage/Saturn_during_Equinox_76d6b2d7.jpg",
+      imageCredit: "Colecția furnizată · NASA/JPL/SSI",
       mission: {
         category: "Planete",
         type: "planet",

@@ -168,6 +168,60 @@ function createPlanetTexture(
   return texture;
 }
 
+function createPhotoTexture(
+  THREE: typeof import("three"),
+  image: HTMLImageElement,
+  planetId: string
+) {
+  const isSaturn = planetId === "saturn";
+  const canvas = document.createElement("canvas");
+  const width = isSaturn ? 640 : 512;
+  const height = isSaturn ? 310 : 512;
+  canvas.width = width;
+  canvas.height = height;
+  const context = canvas.getContext("2d");
+  if (!context) return null;
+
+  context.drawImage(image, 0, 0, width, height);
+  const pixels = context.getImageData(0, 0, width, height);
+  if (isSaturn) {
+    for (let index = 0; index < pixels.data.length; index += 4) {
+      const luminance =
+        pixels.data[index] * 0.2126 +
+        pixels.data[index + 1] * 0.7152 +
+        pixels.data[index + 2] * 0.0722;
+      pixels.data[index + 3] =
+        luminance < 16 ? 0 : Math.min(255, (luminance - 8) * 18);
+    }
+  } else {
+    const radius = width * 0.47;
+    const center = width / 2;
+    for (let y = 0; y < height; y += 1) {
+      for (let x = 0; x < width; x += 1) {
+        const distance = Math.hypot(x - center, y - center);
+        const pixelIndex = (y * width + x) * 4;
+        const luminance =
+          pixels.data[pixelIndex] * 0.2126 +
+          pixels.data[pixelIndex + 1] * 0.7152 +
+          pixels.data[pixelIndex + 2] * 0.0722;
+        const edgeAlpha = Math.max(
+          0,
+          Math.min(1, (radius + 5 - distance) / 10)
+        );
+        const backgroundAlpha = luminance < 12 ? 0 : 1;
+        pixels.data[pixelIndex + 3] = Math.round(
+          edgeAlpha * backgroundAlpha * 255
+        );
+      }
+    }
+  }
+  context.putImageData(pixels, 0, 0);
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.colorSpace = THREE.SRGBColorSpace;
+  texture.needsUpdate = true;
+  return texture;
+}
+
 export default function CelestialGlobe({
   color,
   accent,
@@ -194,6 +248,7 @@ export default function CelestialGlobe({
     const disposables: Array<{ dispose: () => void }> = [];
     const animatedGroups: Array<{ rotation: { y: number } }> = [];
     const profile = planetId ? planetProfiles[planetId] : undefined;
+    const photoTextureMode = Boolean(textureUrl?.startsWith("/manus-storage/"));
     const setFallback = (message: string) => {
       if (!disposed) setNotice(message);
     };
@@ -219,6 +274,7 @@ export default function CelestialGlobe({
       renderer.setPixelRatio(getDpr());
       renderer.setClearColor(0x000000, 0);
       mount.appendChild(renderer.domElement);
+      mount.classList.add("celestial-globe-webgl");
       const group = new THREE.Group();
       group.scale.setScalar(
         size === "hero" ? 0.66 : size === "step" ? 0.78 : 0.76
@@ -324,18 +380,24 @@ export default function CelestialGlobe({
       } else {
         const material = addMaterial(
           new THREE.MeshStandardMaterial({
-            color: profile ? 0xffffff : new THREE.Color(color),
+            color: new THREE.Color(color),
             roughness: planetId === "moon" ? 0.95 : 0.72,
             metalness: 0.02,
+            transparent: photoTextureMode,
+            opacity: photoTextureMode ? 0.05 : 1,
+            depthWrite: !photoTextureMode,
           })
         );
         const surface = addGeometry(new THREE.SphereGeometry(1, 64, 48));
         add(new THREE.Mesh(surface, material));
         if (profile) {
-          texture = createPlanetTexture(THREE, planetId!, profile);
-          material.map = texture;
+          const generated = createPlanetTexture(THREE, planetId!, profile);
+          disposables.push(generated);
+          material.map = generated;
+          material.color.set(0xffffff);
           material.needsUpdate = true;
-        } else if (textureUrl) {
+        }
+        if (textureUrl) {
           const loader = new THREE.TextureLoader();
           loader.setCrossOrigin("anonymous");
           loader.load(
@@ -345,14 +407,42 @@ export default function CelestialGlobe({
                 loaded.dispose();
                 return;
               }
-              texture = loaded;
-              texture.colorSpace = THREE.SRGBColorSpace;
-              material.map = texture;
-              material.color.set(0xffffff);
-              material.needsUpdate = true;
+              const photoTexture = createPhotoTexture(
+                THREE,
+                loaded.image,
+                planetId ?? ""
+              );
+              loaded.dispose();
+              if (!photoTexture) return;
+              disposables.push(photoTexture);
+              const photoMaterial = addMaterial(
+                new THREE.MeshBasicMaterial({
+                  map: photoTexture,
+                  transparent: true,
+                  depthWrite: false,
+                  side: THREE.DoubleSide,
+                })
+              );
+              const isSaturn = planetId === "saturn";
+              const photo = new THREE.Mesh(
+                addGeometry(
+                  new THREE.PlaneGeometry(
+                    isSaturn ? 2.42 : 1.92,
+                    isSaturn ? 1.17 : 1.92
+                  )
+                ),
+                photoMaterial
+              );
+              photo.position.z = 1.01;
+              photo.renderOrder = 3;
+              add(photo);
             },
             undefined,
-            () => setFallback("Textura nu s-a putut încărca.")
+            () => {
+              if (!profile) {
+                setFallback("Textura nu s-a putut încărca.");
+              }
+            }
           );
         }
         if (profile) {
@@ -362,13 +452,17 @@ export default function CelestialGlobe({
               new THREE.MeshBasicMaterial({
                 color: new THREE.Color(profile.atmosphere),
                 transparent: true,
-                opacity: planetId === "moon" ? 0.04 : 0.13,
+                opacity: photoTextureMode
+                  ? 0.03
+                  : planetId === "moon"
+                    ? 0.04
+                    : 0.13,
                 side: THREE.BackSide,
               })
             )
           );
           add(atmosphere);
-          if (profile.ring) {
+          if (profile.ring && !textureUrl) {
             const ring = new THREE.Mesh(
               addGeometry(
                 new THREE.RingGeometry(
@@ -491,6 +585,7 @@ export default function CelestialGlobe({
       renderer?.dispose();
       if (renderer?.domElement.parentNode === mount)
         mount.removeChild(renderer.domElement);
+      mount.classList.remove("celestial-globe-webgl");
     };
   }, [accent, color, globeKind, motionEnabled, planetId, size, textureUrl]);
 

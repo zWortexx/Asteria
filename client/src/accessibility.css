@@ -62,6 +62,9 @@
   opacity: 0.9;
   pointer-events: none;
 }
+.celestial-globe-webgl .celestial-globe-fallback {
+  opacity: 0;
+}
 .celestial-globe-notice {
   position: absolute;
   z-index: 2;
