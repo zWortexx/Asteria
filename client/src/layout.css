@@ -1,0 +1,437 @@
+.app-shell {
+  overflow: hidden;
+  background: var(--paper);
+}
+.site-header {
+  height: 76px;
+  position: relative;
+  z-index: 20;
+  background: var(--navy);
+  color: var(--white);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.09);
+}
+.header-inner {
+  height: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 52px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.brand-mark {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 21px;
+  letter-spacing: -0.02em;
+  position: relative;
+}
+.brand-dot {
+  width: 8px;
+  height: 8px;
+  background: var(--brass);
+  border-radius: 50%;
+  display: inline-block;
+  box-shadow: 0 0 18px rgba(216, 169, 91, 0.7);
+}
+.brand-mark small {
+  font-family: "DM Mono", monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 7px;
+  color: #91a29d;
+  position: absolute;
+  left: 17px;
+  top: 25px;
+  white-space: nowrap;
+}
+.desktop-nav {
+  display: flex;
+  gap: 31px;
+  margin-left: 70px;
+}
+.nav-link {
+  color: #93a09b;
+  font-size: 12px;
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  letter-spacing: 0.04em;
+  transition: color 0.18s ease;
+}
+.nav-link span {
+  font:
+    10px "DM Mono",
+    monospace;
+  color: #596a65;
+}
+.nav-link:hover,
+.nav-link.is-active {
+  color: var(--white);
+}
+.nav-link.is-active span {
+  color: var(--brass);
+}
+.header-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.icon-button {
+  width: 36px;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: inherit;
+  background: transparent;
+  cursor: pointer;
+  border-radius: 2px;
+  transition:
+    background 0.18s ease,
+    color 0.18s ease,
+    transform 0.18s ease;
+}
+.icon-button:hover {
+  background: rgba(255, 255, 255, 0.09);
+}
+.icon-button:active,
+.button:active {
+  transform: scale(0.97);
+}
+.search-trigger {
+  width: auto;
+  padding: 0 10px;
+  gap: 8px;
+  font-size: 11px;
+  color: #a8b1ad;
+}
+.search-trigger kbd {
+  font:
+    10px "DM Mono",
+    monospace;
+  color: #6f817b;
+  border: 1px solid #44544e;
+  padding: 3px 5px;
+  border-radius: 2px;
+}
+.menu-trigger {
+  display: none;
+}
+
+main {
+  min-height: 50vh;
+}
+.hero-section {
+  min-height: 675px;
+  display: grid;
+  grid-template-columns: 1fr 0.9fr;
+  background: var(--navy);
+  color: var(--white);
+  padding: 91px 8.5% 79px;
+  position: relative;
+  isolation: isolate;
+}
+.hero-section:before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0.1;
+  z-index: -1;
+  background-image:
+    radial-gradient(
+      circle at 45% 40%,
+      rgba(125, 183, 179, 0.9) 0 1px,
+      transparent 1.5px
+    ),
+    radial-gradient(
+      circle at 70% 20%,
+      rgba(216, 169, 91, 0.9) 0 1px,
+      transparent 1.5px
+    );
+  background-size:
+    58px 58px,
+    93px 93px;
+  mask-image: linear-gradient(90deg, transparent, #000 35%, #000);
+}
+.hero-section:after {
+  content: "";
+  position: absolute;
+  width: 520px;
+  height: 520px;
+  border-radius: 50%;
+  right: 16%;
+  top: 34%;
+  background: radial-gradient(
+    circle,
+    rgba(216, 169, 91, 0.08),
+    transparent 67%
+  );
+  z-index: -1;
+  filter: blur(8px);
+}
+.hero-copy {
+  max-width: 650px;
+  align-self: center;
+  padding-left: 4%;
+  animation: rise-in 0.7s cubic-bezier(0.23, 1, 0.32, 1) both;
+}
+.eyebrow {
+  margin: 0 0 17px;
+  font:
+    10px "DM Mono",
+    monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: #71837d;
+}
+.hero-section .eyebrow {
+  color: #9dafaa;
+}
+.eyebrow-rule {
+  display: inline-block;
+  width: 27px;
+  height: 1px;
+  vertical-align: middle;
+  margin-right: 10px;
+  background: var(--brass);
+}
+.hero-copy h1,
+.section-intro h1,
+.route-detail-head h1,
+.empty-page h1 {
+  margin: 0;
+  font:
+    600 clamp(51px, 6vw, 88px) / 0.98 "Playfair Display",
+    Georgia,
+    serif;
+  letter-spacing: -0.06em;
+  color: var(--white);
+}
+.hero-dek {
+  max-width: 420px;
+  margin: 30px 0 33px;
+  color: #bac6bd;
+  font-size: 16px;
+  line-height: 1.65;
+}
+.hero-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.button {
+  min-height: 42px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 0 17px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  border: 1px solid transparent;
+  border-radius: 2px;
+  transition: 0.18s ease;
+}
+.button:hover {
+  transform: translateY(-2px);
+}
+.button-brass {
+  background: var(--brass);
+  color: var(--ink);
+}
+.button-brass:hover {
+  background: #edbc6b;
+}
+.button-ghost {
+  color: #d5dfd9;
+  border-color: rgba(220, 230, 225, 0.28);
+}
+.button-ghost:hover {
+  background: rgba(255, 255, 255, 0.07);
+}
+.button-dark {
+  background: var(--navy);
+  color: var(--white);
+}
+.button-outline {
+  border: 1px solid var(--line);
+  color: var(--ink);
+  background: transparent;
+}
+.button-saved {
+  background: var(--teal);
+  color: var(--ink);
+}
+.hero-footnote {
+  margin-top: 75px;
+  color: #80918a;
+  font:
+    10px "DM Mono",
+    monospace;
+  letter-spacing: 0.03em;
+}
+.hero-aside {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 26px;
+  padding: 10px 4% 0 0;
+}
+.hero-orbit-card {
+  width: min(405px, 100%);
+  border: 1px solid rgba(216, 169, 91, 0.3);
+  padding: 22px 24px 17px;
+  background: rgba(11, 25, 23, 0.52);
+  animation: float-in 1s cubic-bezier(0.23, 1, 0.32, 1) both 0.1s;
+}
+.hero-orbit-card .eyebrow {
+  color: #a9ada0;
+}
+.hero-orbit-graphic {
+  height: 260px;
+  position: relative;
+  margin-top: 4px;
+  overflow: hidden;
+}
+.hero-sun {
+  position: absolute;
+  width: 86px;
+  height: 86px;
+  border-radius: 50%;
+  top: 44%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle at 35% 35%, #ffe6a8, #d8a95b 48%, #85502b);
+  box-shadow: 0 0 34px rgba(216, 169, 91, 0.32);
+}
+.hero-orbit {
+  position: absolute;
+  border: 1px solid rgba(125, 183, 179, 0.38);
+  border-radius: 50%;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%) rotate(-23deg);
+}
+.hero-orbit.orbit-a {
+  width: 150px;
+  height: 96px;
+}
+.hero-orbit.orbit-b {
+  width: 280px;
+  height: 170px;
+}
+.hero-orbit.orbit-c {
+  width: 410px;
+  height: 245px;
+  border-color: rgba(216, 169, 91, 0.24);
+}
+.hero-planet {
+  position: absolute;
+  border-radius: 50%;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.4);
+}
+.planet-earth {
+  width: 15px;
+  height: 15px;
+  left: 67%;
+  top: 27%;
+  background: #6aa29c;
+}
+.planet-mars {
+  width: 11px;
+  height: 11px;
+  left: 17%;
+  top: 61%;
+  background: #c9704f;
+}
+.hero-card-footer {
+  display: flex;
+  justify-content: space-between;
+  color: #778b83;
+  font:
+    9px "DM Mono",
+    monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.hero-note {
+  width: min(405px, 100%);
+  display: flex;
+  gap: 13px;
+  color: #9bab9f;
+  font-size: 12px;
+  line-height: 1.55;
+}
+.hero-note p {
+  margin: 0;
+}
+.hero-note strong {
+  color: #d7dfd7;
+  font-weight: 500;
+}
+.note-pin {
+  color: var(--brass);
+  font-size: 16px;
+  margin-top: 2px;
+}
+
+.home-section,
+.page-section {
+  padding: 92px max(7%, calc((100vw - 1260px) / 2));
+}
+.home-section {
+  background: var(--paper);
+}
+.section-kicker-row,
+.section-intro {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 35px;
+  margin-bottom: 43px;
+}
+.section-kicker-row h2,
+.routes-promise h3,
+.about-lede h2,
+.library-note h3 {
+  margin: 0;
+  font:
+    500 clamp(32px, 4vw, 52px) / 1.05 "Playfair Display",
+    Georgia,
+    serif;
+  letter-spacing: -0.045em;
+  color: var(--ink);
+}
+.section-aside-copy {
+  max-width: 280px;
+  margin: 0 4% 3px 0;
+  color: var(--ink-soft);
+  font-size: 13px;
+  line-height: 1.6;
+}
+.text-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  color: var(--ink);
+  cursor: pointer;
+  background: transparent;
+  padding: 0;
+  border-bottom: 1px solid transparent;
+  transition:
+    border 0.18s ease,
+    gap 0.18s ease;
+}
+.text-link:hover {
+  gap: 10px;
+  border-color: var(--brass);
+}

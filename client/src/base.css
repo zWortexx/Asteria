@@ -1,0 +1,55 @@
+:root {
+  --ink: #192522;
+  --ink-soft: #53635e;
+  --paper: #ece7d9;
+  --paper-deep: #e3dccb;
+  --navy: #13211f;
+  --navy-deep: #0c1716;
+  --navy-soft: #20312e;
+  --line: rgba(22, 43, 39, 0.16);
+  --line-light: rgba(237, 231, 215, 0.15);
+  --brass: #d8a95b;
+  --teal: #7db7b3;
+  --coral: #e38d6e;
+  --white: #f5f0e4;
+  --radius: 3px;
+  font-family:
+    "DM Sans",
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+  color: var(--ink);
+  background: var(--paper);
+  font-synthesis: none;
+}
+
+* {
+  box-sizing: border-box;
+}
+html {
+  scroll-behavior: smooth;
+}
+body {
+  margin: 0;
+  min-width: 320px;
+  background: var(--paper);
+  color: var(--ink);
+}
+button,
+input {
+  font: inherit;
+}
+button {
+  border: 0;
+}
+a {
+  color: inherit;
+  text-decoration: none;
+}
+::selection {
+  background: var(--brass);
+  color: var(--ink);
+}

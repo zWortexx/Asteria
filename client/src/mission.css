@@ -1,0 +1,1150 @@
+/* Interactive rocket mission */
+.mission-section {
+  padding: 105px max(5%, calc((100vw - 1340px) / 2));
+  background: #0b1716;
+  color: var(--white);
+  position: relative;
+  overflow: hidden;
+}
+.mission-section::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0.18;
+  background-image:
+    linear-gradient(rgba(125, 183, 179, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(125, 183, 179, 0.08) 1px, transparent 1px);
+  background-size: 78px 78px;
+  mask-image: radial-gradient(ellipse at center, #000, transparent 78%);
+  pointer-events: none;
+}
+.mission-heading {
+  max-width: 1180px;
+  margin: 0 auto 44px;
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 50px;
+  position: relative;
+  z-index: 1;
+}
+.mission-eyebrow {
+  color: var(--brass);
+}
+.mission-heading h2 {
+  margin: 0;
+  font:
+    500 clamp(37px, 5vw, 68px) / 0.98 "Playfair Display",
+    Georgia,
+    serif;
+  letter-spacing: -0.055em;
+}
+.mission-heading h2 em {
+  color: #9abbb2;
+  font-style: italic;
+}
+.mission-intro {
+  max-width: 320px;
+  margin: 0 2% 4px 0;
+  color: #94aaa2;
+  font-size: 13px;
+  line-height: 1.7;
+}
+.mission-console {
+  max-width: 1180px;
+  min-height: 650px;
+  margin: 0 auto;
+  position: relative;
+  isolation: isolate;
+  border: 1px solid rgba(125, 183, 179, 0.25);
+  background: #081311;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.28);
+  overflow: hidden;
+}
+.mission-sky {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background:
+    radial-gradient(
+      ellipse at 50% 45%,
+      rgba(55, 103, 95, 0.2),
+      transparent 38%
+    ),
+    radial-gradient(
+      ellipse at 78% 20%,
+      rgba(216, 169, 91, 0.1),
+      transparent 28%
+    ),
+    #081311;
+  transition: filter 0.5s ease;
+}
+.mission-phase-transit .mission-sky {
+  filter: saturate(1.25) brightness(1.08);
+  animation: mission-camera-drift 3.9s ease-in-out both;
+}
+.mission-star {
+  position: absolute;
+  border-radius: 50%;
+  background: #d9eadb;
+  opacity: 0.55;
+  box-shadow: 0 0 9px rgba(217, 234, 219, 0.65);
+  animation: mission-star-pulse 3s ease-in-out infinite;
+}
+.mission-phase-transit .mission-star {
+  animation: mission-warp 1.05s linear infinite;
+}
+.mission-nebula {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(32px);
+  opacity: 0.16;
+  pointer-events: none;
+}
+.mission-nebula-a {
+  width: 360px;
+  height: 170px;
+  left: 42%;
+  top: 24%;
+  background: #4d9995;
+  transform: rotate(-22deg);
+}
+.mission-nebula-b {
+  width: 300px;
+  height: 140px;
+  right: -4%;
+  bottom: 6%;
+  background: #bd5d3f;
+  transform: rotate(18deg);
+}
+.mission-orbit-ring {
+  position: absolute;
+  left: 50%;
+  top: 47%;
+  border: 1px solid rgba(157, 201, 190, 0.2);
+  border-radius: 50%;
+  transform: translate(-50%, -50%) rotate(-23deg);
+  transition:
+    opacity 0.4s ease,
+    transform 1s ease;
+}
+.ring-a {
+  width: 420px;
+  height: 230px;
+}
+.ring-b {
+  width: 720px;
+  height: 370px;
+  border-color: rgba(216, 169, 91, 0.13);
+}
+.mission-target {
+  position: absolute;
+  left: 72%;
+  top: 48%;
+  width: 150px;
+  height: 150px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: radial-gradient(
+    circle at 32% 25%,
+    color-mix(in srgb, var(--mission-accent) 72%, white),
+    var(--mission-color) 48%,
+    color-mix(in srgb, var(--mission-color) 45%, black)
+  );
+  box-shadow:
+    inset -18px -20px 30px rgba(2, 10, 10, 0.5),
+    0 0 55px color-mix(in srgb, var(--mission-color) 30%, transparent);
+  opacity: 0.95;
+  transition:
+    left 1s cubic-bezier(0.23, 1, 0.32, 1),
+    transform 0.7s ease,
+    width 0.7s ease,
+    height 0.7s ease;
+}
+.mission-target span {
+  position: absolute;
+  inset: -16px;
+  border: 1px solid color-mix(in srgb, var(--mission-accent) 48%, transparent);
+  border-radius: 50%;
+  animation: mission-target-pulse 2.6s ease-in-out infinite;
+}
+.mission-target b {
+  position: absolute;
+  top: calc(100% + 17px);
+  color: #9bb3a9;
+  font:
+    9px "DM Mono",
+    monospace;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.mission-type-deep-space .mission-target {
+  width: 108px;
+  height: 108px;
+  background: radial-gradient(
+    circle,
+    #020307 0 38%,
+    #15101b 40% 54%,
+    color-mix(in srgb, var(--mission-accent) 70%, transparent) 60%,
+    transparent 72%
+  );
+  box-shadow: 0 0 45px
+    color-mix(in srgb, var(--mission-accent) 55%, transparent);
+}
+.mission-phase-transit .mission-target {
+  left: 86%;
+  transform: translate(-50%, -50%) scale(0.82);
+}
+.mission-phase-arrived .mission-target {
+  left: 77%;
+  transform: translate(-50%, -50%) scale(1.08);
+}
+.mission-rocket {
+  position: absolute;
+  left: 25%;
+  top: 50%;
+  width: 82px;
+  height: 82px;
+  display: grid;
+  place-items: center;
+  color: #dce7df;
+  transform: translate(-50%, -50%) rotate(45deg);
+  filter: drop-shadow(0 0 15px rgba(216, 169, 91, 0.34));
+  z-index: 3;
+  transition:
+    left 3.8s cubic-bezier(0.23, 1, 0.32, 1),
+    top 3.8s cubic-bezier(0.23, 1, 0.32, 1),
+    transform 1.1s ease,
+    filter 0.4s ease;
+}
+.mission-rocket::before {
+  content: "";
+  position: absolute;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #203630;
+  border: 1px solid #a8c5b6;
+  box-shadow: inset -8px -8px 14px rgba(0, 0, 0, 0.38);
+}
+.mission-rocket svg {
+  position: relative;
+  z-index: 2;
+}
+.rocket-window {
+  position: absolute;
+  z-index: 3;
+  width: 11px;
+  height: 11px;
+  top: 22px;
+  left: 36px;
+  border-radius: 50%;
+  background: #7db7b3;
+  border: 1px solid #dce7df;
+}
+.rocket-fin {
+  position: absolute;
+  width: 13px;
+  height: 23px;
+  background: var(--brass);
+  border-radius: 2px;
+  bottom: 24px;
+  z-index: 1;
+}
+.rocket-fin-left {
+  left: 13px;
+  transform: rotate(-18deg);
+}
+.rocket-fin-right {
+  right: 13px;
+  transform: rotate(18deg);
+}
+.rocket-flame {
+  position: absolute;
+  z-index: -1;
+  left: 24px;
+  bottom: -12px;
+  color: var(--coral);
+  opacity: 0.86;
+  transform: rotate(45deg);
+  animation: mission-flame 180ms ease-in-out infinite alternate;
+}
+.mission-phase-transit .mission-rocket {
+  left: 70%;
+  top: 44%;
+  transform: translate(-50%, -50%) rotate(45deg) scale(1.08);
+  filter: drop-shadow(0 0 27px rgba(216, 169, 91, 0.8));
+}
+.mission-phase-arrived .mission-rocket {
+  left: 73%;
+  top: 45%;
+  transform: translate(-50%, -50%) rotate(90deg) scale(0.8);
+}
+.mission-phase-arrived.mission-type-planet .mission-rocket {
+  top: 63%;
+  transform: translate(-50%, -50%) rotate(90deg) scale(0.78);
+}
+.mission-phase-arrived.mission-type-deep-space .mission-rocket {
+  opacity: 0.78;
+  transform: translate(-50%, -50%) rotate(45deg) scale(0.74);
+}
+.mission-cockpit {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.6s ease;
+  background: radial-gradient(
+    ellipse at center,
+    transparent 22%,
+    rgba(3, 9, 9, 0.68) 75%
+  );
+  z-index: 2;
+}
+.mission-type-deep-space.mission-phase-arrived .mission-cockpit {
+  opacity: 1;
+}
+.cockpit-glass {
+  width: min(66%, 650px);
+  height: min(62%, 380px);
+  border: 1px solid rgba(125, 183, 179, 0.45);
+  border-radius: 50%;
+  box-shadow:
+    inset 0 0 40px rgba(125, 183, 179, 0.08),
+    0 0 0 12px rgba(7, 19, 17, 0.32);
+  position: relative;
+}
+.cockpit-glass::before,
+.cockpit-glass::after {
+  content: "";
+  position: absolute;
+  background: rgba(125, 183, 179, 0.3);
+}
+.cockpit-glass::before {
+  width: 1px;
+  height: 100%;
+  left: 50%;
+}
+.cockpit-glass::after {
+  width: 100%;
+  height: 1px;
+  top: 50%;
+}
+.cockpit-reticle {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 30px;
+  height: 30px;
+  border: 1px solid var(--brass);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+}
+.cockpit-label {
+  position: absolute;
+  left: 50%;
+  top: calc(100% + 17px);
+  transform: translateX(-50%);
+  color: #9db8ab;
+  font:
+    9px "DM Mono",
+    monospace;
+  letter-spacing: 0.14em;
+  white-space: nowrap;
+}
+.mission-hud {
+  position: absolute;
+  inset: 0 0 auto;
+  z-index: 5;
+  display: flex;
+  gap: 24px;
+  align-items: center;
+  padding: 17px 21px;
+  border-bottom: 1px solid rgba(125, 183, 179, 0.14);
+  color: #78938a;
+  font:
+    9px "DM Mono",
+    monospace;
+  letter-spacing: 0.11em;
+}
+.mission-hud span {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+.mission-hud > span:nth-child(2) {
+  margin-left: auto;
+  color: var(--brass);
+}
+.hud-coordinates {
+  color: #536f67;
+}
+.hud-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--teal);
+  box-shadow: 0 0 10px var(--teal);
+}
+.mission-selector {
+  position: absolute;
+  z-index: 6;
+  left: 30px;
+  bottom: 27px;
+  width: min(590px, calc(100% - 60px));
+  padding: 23px;
+  background: rgba(9, 23, 21, 0.91);
+  border: 1px solid rgba(216, 169, 91, 0.28);
+  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(14px);
+  animation: mission-panel-in 0.45s cubic-bezier(0.23, 1, 0.32, 1) both;
+}
+.selector-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  gap: 20px;
+}
+.selector-top h3 {
+  margin: 0;
+  font:
+    500 28px "Playfair Display",
+    serif;
+}
+.selector-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #78938a;
+  font:
+    9px "DM Mono",
+    monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.mission-tabs {
+  display: flex;
+  gap: 8px;
+  margin: 20px 0 14px;
+  border-bottom: 1px solid rgba(125, 183, 179, 0.16);
+}
+.mission-tabs button {
+  padding: 9px 0;
+  margin-right: 19px;
+  color: #718981;
+  background: transparent;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  font-size: 12px;
+}
+.mission-tabs button.is-active {
+  color: var(--white);
+  border-color: var(--brass);
+}
+.mission-tabs small {
+  margin-left: 6px;
+  color: var(--brass);
+  font:
+    9px "DM Mono",
+    monospace;
+}
+.destination-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+.destination-chip {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 54px;
+  padding: 8px 10px;
+  color: #c6d5cd;
+  background: rgba(125, 183, 179, 0.06);
+  border: 1px solid transparent;
+  text-align: left;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+.destination-chip:hover,
+.destination-chip.is-selected {
+  border-color: rgba(216, 169, 91, 0.55);
+  background: rgba(216, 169, 91, 0.1);
+  transform: translateY(-2px);
+}
+.destination-chip > svg {
+  margin-left: auto;
+  color: #6e8d83;
+}
+.destination-chip strong,
+.destination-chip small {
+  display: block;
+}
+.destination-chip strong {
+  font:
+    500 14px "Playfair Display",
+    serif;
+}
+.destination-chip small {
+  margin-top: 3px;
+  color: #77918a;
+  font:
+    8px "DM Mono",
+    monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.destination-glyph {
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  border: 1px solid color-mix(in srgb, var(--mission-accent) 55%, transparent);
+  border-radius: 50%;
+}
+.destination-glyph span {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 32% 25%,
+    color-mix(in srgb, var(--mission-accent) 70%, white),
+    var(--mission-color)
+  );
+  box-shadow: inset -4px -4px 6px rgba(0, 0, 0, 0.28);
+}
+.selector-note {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin: 17px 0 0;
+  color: #78938a;
+  font-size: 10px;
+}
+.selector-note svg {
+  color: var(--brass);
+}
+.mission-transit-card,
+.mission-arrival-card {
+  position: absolute;
+  z-index: 8;
+  left: 30px;
+  right: 30px;
+  bottom: 27px;
+  background: rgba(9, 23, 21, 0.94);
+  border: 1px solid rgba(125, 183, 179, 0.35);
+  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.28);
+  backdrop-filter: blur(16px);
+  animation: mission-panel-in 0.45s cubic-bezier(0.23, 1, 0.32, 1) both;
+}
+.mission-transit-card {
+  display: grid;
+  grid-template-columns: auto 1fr 190px;
+  align-items: center;
+  gap: 17px;
+  padding: 21px;
+}
+.transit-icon {
+  width: 43px;
+  height: 43px;
+  display: grid;
+  place-items: center;
+  color: var(--brass);
+  border: 1px solid rgba(216, 169, 91, 0.42);
+  border-radius: 50%;
+  animation: mission-engine-pulse 1s ease-in-out infinite;
+}
+.mission-transit-card h3,
+.mission-arrival-card h3 {
+  margin: 0;
+  font:
+    500 25px "Playfair Display",
+    serif;
+}
+.mission-transit-card p:not(.eyebrow) {
+  margin: 5px 0 0;
+  color: #8fa69e;
+  font-size: 11px;
+}
+.transit-progress {
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+}
+.transit-progress > span {
+  display: block;
+  height: 3px;
+  background: var(--teal);
+  transform-origin: left;
+  animation: mission-progress 3.9s cubic-bezier(0.23, 1, 0.32, 1) both;
+}
+.transit-progress small {
+  color: #738d85;
+  font:
+    8px "DM Mono",
+    monospace;
+  letter-spacing: 0.1em;
+}
+.mission-arrival-card {
+  padding: 22px 24px 18px;
+}
+.arrival-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 15px;
+  border-bottom: 1px solid rgba(125, 183, 179, 0.16);
+}
+.arrival-badge,
+.arrival-mode {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font:
+    9px "DM Mono",
+    monospace;
+  letter-spacing: 0.1em;
+}
+.arrival-badge {
+  color: var(--teal);
+}
+.arrival-badge > span {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--teal);
+  box-shadow: 0 0 10px var(--teal);
+}
+.arrival-mode {
+  color: var(--brass);
+}
+.arrival-content {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 35px;
+  padding: 22px 0;
+}
+.arrival-content h3 {
+  font-size: 38px;
+}
+.arrival-distance {
+  margin: 4px 0 13px;
+  color: var(--brass);
+  font:
+    10px "DM Mono",
+    monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+.arrival-description {
+  max-width: 570px;
+  margin: 0;
+  color: #a6b8b0;
+  font-size: 12px;
+  line-height: 1.65;
+}
+.arrival-facts {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 9px;
+  align-content: start;
+}
+.arrival-facts div {
+  padding: 11px 9px;
+  border: 1px solid rgba(125, 183, 179, 0.17);
+}
+.arrival-facts span,
+.arrival-facts strong {
+  display: block;
+}
+.arrival-facts span {
+  color: #6d8980;
+  font:
+    8px "DM Mono",
+    monospace;
+  text-transform: uppercase;
+}
+.arrival-facts strong {
+  margin-top: 7px;
+  color: #d9e5dc;
+  font-size: 12px;
+  font-weight: 500;
+}
+.arrival-actions {
+  display: flex;
+  gap: 10px;
+  padding-top: 15px;
+  border-top: 1px solid rgba(125, 183, 179, 0.16);
+}
+.mission-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 39px;
+  padding: 0 14px;
+  color: #b9cdc3;
+  background: transparent;
+  border: 1px solid rgba(125, 183, 179, 0.26);
+  cursor: pointer;
+  font-size: 11px;
+  transition: 0.18s ease;
+}
+.mission-action:hover {
+  transform: translateY(-2px);
+  border-color: var(--brass);
+  color: var(--white);
+}
+.mission-action-primary {
+  color: var(--ink);
+  background: var(--brass);
+  border-color: var(--brass);
+}
+.mission-back-button {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin: 15px auto 0;
+  color: #87a098;
+  background: transparent;
+  cursor: pointer;
+  font:
+    10px "DM Mono",
+    monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+@keyframes mission-panel-in {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes mission-star-pulse {
+  0%,
+  100% {
+    opacity: 0.28;
+    transform: scale(0.8);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.2);
+  }
+}
+@keyframes mission-warp {
+  from {
+    opacity: 0.12;
+    transform: scaleY(0.5) translateY(0);
+  }
+  to {
+    opacity: 0.95;
+    transform: scaleY(3) translateY(-12px);
+  }
+}
+@keyframes mission-target-pulse {
+  0%,
+  100% {
+    transform: scale(0.94);
+    opacity: 0.35;
+  }
+  50% {
+    transform: scale(1.08);
+    opacity: 0.8;
+  }
+}
+@keyframes mission-flame {
+  from {
+    transform: rotate(45deg) scale(0.8);
+    opacity: 0.55;
+  }
+  to {
+    transform: rotate(45deg) scale(1.17);
+    opacity: 1;
+  }
+}
+@keyframes mission-engine-pulse {
+  50% {
+    box-shadow: 0 0 24px rgba(216, 169, 91, 0.42);
+  }
+}
+@keyframes mission-progress {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+@keyframes mission-camera-drift {
+  0% {
+    transform: scale(1) rotate(0);
+  }
+  42% {
+    transform: scale(1.06) rotate(-0.4deg);
+  }
+  100% {
+    transform: scale(1.02) rotate(0.2deg);
+  }
+}
+@media (max-width: 740px) {
+  .mission-section {
+    padding: 70px 20px;
+  }
+  .mission-heading {
+    display: block;
+    margin-bottom: 30px;
+  }
+  .mission-intro {
+    margin: 20px 0 0;
+  }
+  .mission-console {
+    min-height: 690px;
+  }
+  .mission-hud {
+    gap: 10px;
+    padding: 13px;
+    font-size: 7px;
+    flex-wrap: wrap;
+  }
+  .mission-hud > span:nth-child(2) {
+    margin-left: 0;
+  }
+  .hud-coordinates {
+    flex-basis: 100%;
+  }
+  .mission-selector {
+    left: 14px;
+    right: 14px;
+    bottom: 14px;
+    width: auto;
+    padding: 17px;
+  }
+  .selector-status {
+    display: none;
+  }
+  .destination-grid {
+    grid-template-columns: 1fr;
+  }
+  .mission-target {
+    left: 74%;
+    top: 38%;
+    width: 105px;
+    height: 105px;
+  }
+  .mission-rocket {
+    left: 26%;
+    top: 38%;
+    transform: translate(-50%, -50%) rotate(45deg) scale(0.8);
+  }
+  .mission-phase-transit .mission-rocket {
+    left: 68%;
+    top: 34%;
+  }
+  .mission-phase-arrived .mission-rocket {
+    left: 72%;
+    top: 36%;
+  }
+  .mission-phase-arrived.mission-type-planet .mission-rocket {
+    top: 52%;
+  }
+  .mission-transit-card,
+  .mission-arrival-card {
+    left: 14px;
+    right: 14px;
+    bottom: 14px;
+  }
+  .mission-transit-card {
+    grid-template-columns: auto 1fr;
+    padding: 16px;
+  }
+  .transit-progress {
+    grid-column: 1 / -1;
+  }
+  .arrival-content {
+    display: block;
+    padding: 17px 0;
+  }
+  .arrival-content h3 {
+    font-size: 32px;
+  }
+  .arrival-facts {
+    margin-top: 18px;
+  }
+  .arrival-actions {
+    flex-direction: column;
+  }
+  .mission-action {
+    width: 100%;
+  }
+  .arrival-top {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .cockpit-glass {
+    width: 84%;
+    height: 46%;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mission-star,
+  .mission-target span,
+  .rocket-flame,
+  .transit-icon {
+    animation: none !important;
+  }
+  .mission-phase-transit .mission-sky,
+  .mission-phase-transit .mission-star {
+    animation: none !important;
+  }
+  .mission-rocket,
+  .mission-target {
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Mission exploration states */
+.mission-exploring .mission-target {
+  animation: mission-target-pulse 2.2s ease-in-out infinite;
+}
+.mission-exploring.mission-type-planet .mission-target {
+  box-shadow:
+    inset -18px -20px 30px rgba(2, 10, 10, 0.45),
+    0 0 85px color-mix(in srgb, var(--mission-color) 48%, transparent);
+}
+.mission-exploring.mission-type-planet .mission-rocket {
+  filter: drop-shadow(0 0 28px rgba(216, 169, 91, 0.72));
+}
+.mission-exploring.mission-type-deep-space .mission-cockpit {
+  opacity: 1;
+  background: radial-gradient(
+    ellipse at center,
+    transparent 27%,
+    rgba(3, 9, 9, 0.72) 76%
+  );
+}
+.mission-exploration-card {
+  position: absolute;
+  z-index: 8;
+  left: 30px;
+  right: 30px;
+  bottom: 27px;
+  padding: 22px 24px 18px;
+  background: rgba(9, 23, 21, 0.95);
+  border: 1px solid rgba(216, 169, 91, 0.42);
+  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(16px);
+  animation: mission-panel-in 0.45s cubic-bezier(0.23, 1, 0.32, 1) both;
+}
+.exploration-body {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 35px;
+  padding: 22px 0;
+}
+.exploration-body h3 {
+  margin: 0;
+  font:
+    500 32px "Playfair Display",
+    serif;
+}
+.exploration-body p:not(.eyebrow) {
+  max-width: 570px;
+  margin: 10px 0 0;
+  color: #a6b8b0;
+  font-size: 12px;
+  line-height: 1.65;
+}
+.exploration-facts {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 9px;
+  align-content: start;
+}
+.exploration-facts div {
+  padding: 11px 9px;
+  border: 1px solid rgba(125, 183, 179, 0.17);
+}
+.exploration-facts span,
+.exploration-facts strong {
+  display: block;
+}
+.exploration-facts span {
+  color: #6d8980;
+  font:
+    8px "DM Mono",
+    monospace;
+  text-transform: uppercase;
+}
+.exploration-facts strong {
+  margin-top: 7px;
+  color: #d9e5dc;
+  font-size: 12px;
+  font-weight: 500;
+}
+@media (max-width: 740px) {
+  .mission-exploration-card {
+    left: 14px;
+    right: 14px;
+    bottom: 14px;
+    padding: 17px;
+  }
+  .exploration-body {
+    display: block;
+    padding: 17px 0;
+  }
+  .exploration-body h3 {
+    font-size: 28px;
+  }
+  .exploration-facts {
+    margin-top: 18px;
+  }
+  .mission-exploration-card .arrival-actions {
+    flex-direction: column;
+  }
+}
+
+/* Generated mission panoramas */
+.mission-scene-image {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  opacity: 0;
+  filter: saturate(0.82) contrast(1.06) brightness(0.72);
+  transform: scale(1.05);
+  transition:
+    opacity 0.8s ease,
+    transform 1.1s cubic-bezier(0.23, 1, 0.32, 1),
+    filter 0.8s ease;
+}
+.mission-scene-image.is-unavailable {
+  display: none;
+}
+.mission-scene-fallback {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  display: grid;
+  place-items: center;
+}
+.mission-scene-fallback span {
+  margin-top: 150px;
+  color: rgba(236, 231, 217, 0.68);
+  font:
+    9px "DM Mono",
+    monospace;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.mission-exploring .mission-scene-image {
+  opacity: 0.9;
+  filter: saturate(0.92) contrast(1.06) brightness(0.76);
+  transform: scale(1);
+}
+.mission-exploring.mission-type-deep-space .mission-scene-image {
+  opacity: 0.72;
+  filter: saturate(0.86) contrast(1.14) brightness(0.66);
+}
+.mission-exploring.mission-type-planet .mission-sky::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    rgba(3, 12, 11, 0.32),
+    transparent 36%,
+    rgba(3, 12, 11, 0.72)
+  );
+}
+.mission-exploring .mission-orbit-ring,
+.mission-exploring .mission-nebula {
+  opacity: 0.16;
+}
+.mission-exploring .mission-target,
+.mission-exploring .mission-rocket,
+.mission-exploring .mission-cockpit {
+  z-index: 3;
+}
+.mission-exploring .mission-cockpit {
+  z-index: 4;
+}
+
+/* Translucent mission HUD: destination visuals remain visible behind information */
+.mission-phase-arrived .mission-scene-image {
+  opacity: 0.58;
+  filter: saturate(0.88) contrast(1.08) brightness(0.66);
+  transform: scale(1.015);
+}
+.mission-phase-arrived.mission-type-deep-space .mission-scene-image {
+  opacity: 0.52;
+  filter: saturate(0.86) contrast(1.12) brightness(0.62);
+}
+.mission-phase-arrived .mission-sky::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    rgba(3, 12, 11, 0.22),
+    transparent 32%,
+    rgba(3, 12, 11, 0.36)
+  );
+}
+.mission-arrival-card,
+.mission-exploration-card {
+  background: linear-gradient(
+    105deg,
+    rgba(9, 23, 21, 0.68),
+    rgba(9, 23, 21, 0.45) 67%,
+    rgba(216, 169, 91, 0.1)
+  );
+  border-color: rgba(216, 169, 91, 0.46);
+  backdrop-filter: blur(7px) saturate(1.16);
+  -webkit-backdrop-filter: blur(7px) saturate(1.16);
+}
+.mission-arrival-card::before,
+.mission-exploration-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: linear-gradient(90deg, rgba(4, 14, 13, 0.24), transparent 70%);
+}
+.mission-arrival-card .arrival-description,
+.mission-exploration-card .exploration-body p:not(.eyebrow) {
+  color: #d0ddd5;
+  text-shadow: 0 1px 9px rgba(0, 0, 0, 0.62);
+}
+.mission-arrival-card h3,
+.mission-exploration-card h3,
+.mission-arrival-card .arrival-facts strong,
+.mission-exploration-card .exploration-facts strong {
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.72);
+}
+.mission-arrival-card .arrival-facts div,
+.mission-exploration-card .exploration-facts div {
+  background: rgba(5, 16, 15, 0.28);
+  border-color: rgba(190, 222, 207, 0.24);
+  backdrop-filter: blur(3px);
+}

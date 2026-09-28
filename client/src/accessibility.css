@@ -1,0 +1,158 @@
+/* Accessibility and interactive atlas additions */
+.skip-link {
+  position: fixed;
+  left: 12px;
+  top: 10px;
+  z-index: 100;
+  transform: translateY(-160%);
+  padding: 10px 14px;
+  background: var(--brass);
+  color: var(--ink);
+  font-size: 12px;
+  font-weight: 700;
+}
+.skip-link:focus {
+  transform: translateY(0);
+}
+.atlas-canvas {
+  touch-action: none;
+  user-select: none;
+}
+.atlas-pan-layer {
+  position: absolute;
+  inset: -150px;
+  transition: transform 0.12s ease-out;
+  will-change: transform;
+}
+.atlas-canvas-static .atlas-pan-layer {
+  transition: none;
+}
+.atlas-recenter {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: #b7c8be;
+  background: transparent;
+  cursor: pointer;
+  font:
+    9px "DM Mono",
+    monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+.atlas-recenter:hover,
+.atlas-recenter:focus-visible {
+  color: var(--brass);
+}
+.atlas-recenter:disabled {
+  color: #647a72;
+  cursor: not-allowed;
+}
+.celestial-globe-fallback {
+  position: absolute;
+  inset: 18% 25%;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 32% 28%,
+    color-mix(in srgb, var(--globe-accent, #9ed4bd) 72%, white),
+    var(--globe-color, #3b7891) 45%,
+    #0c1716 76%
+  );
+  opacity: 0.9;
+}
+.celestial-globe-notice {
+  position: absolute;
+  left: 14px;
+  bottom: 8px;
+  max-width: 220px;
+  color: #a9c0b3;
+  font-size: 10px;
+  line-height: 1.4;
+}
+.celestial-globe-sphere {
+  --globe-color: #3b7891;
+  --globe-accent: #9ed4bd;
+}
+.celestial-globe-galaxy .celestial-globe-fallback {
+  background: radial-gradient(
+    ellipse,
+    #f7dc9b 0 7%,
+    #8cb6af 20%,
+    transparent 68%
+  );
+  transform: rotate(-18deg) scaleX(1.35);
+}
+.celestial-globe-star .celestial-globe-fallback {
+  inset: 35%;
+  background: radial-gradient(
+    circle,
+    #fff5d0 0 12%,
+    #d9e8f1 30%,
+    transparent 72%
+  );
+  box-shadow: 0 0 55px #b7d7dc;
+}
+.celestial-globe-field .celestial-globe-fallback {
+  inset: 20%;
+  background:
+    radial-gradient(circle, #d8a95b 0 2%, transparent 3%),
+    radial-gradient(circle at 35% 50%, #7db7b3 0 1px, transparent 2px),
+    transparent;
+  background-size:
+    52px 44px,
+    83px 71px;
+}
+.detail-exhibit-photo {
+  position: absolute;
+  right: 20px;
+  bottom: 22px;
+  width: min(150px, 28%);
+  max-height: 110px;
+  object-fit: cover;
+  border: 1px solid rgba(237, 231, 215, 0.38);
+  opacity: 0.72;
+  filter: saturate(0.8);
+}
+.mission-static .mission-sky,
+.mission-static .mission-star,
+.mission-static .mission-target span,
+.mission-static .rocket-flame {
+  animation: none !important;
+}
+.mission-static .mission-rocket,
+.mission-static .mission-target {
+  transition: none !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+.atlas-caption,
+.atlas-coordinates {
+  color: #9db6a9;
+  font-size: 10px;
+}
+.atlas-legend {
+  color: #a8bdb1;
+  font-size: 10px;
+}
+.atlas-toolbar-note {
+  color: #91aaa0;
+}
+@media (max-width: 740px) {
+  .atlas-recenter {
+    order: 2;
+  }
+  .atlas-toggle {
+    order: 3;
+  }
+  .detail-exhibit-photo {
+    width: 30%;
+  }
+}
