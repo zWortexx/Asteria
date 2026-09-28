@@ -44,7 +44,7 @@ const planetProfiles: Record<string, PlanetProfile> = {
     base: [184, 151, 99],
     accent: [241, 211, 155],
     atmosphere: "#f1d39c",
-    ring: { inner: 1.02, outer: 1.78, color: "#e4c28c", opacity: 0.72 },
+    ring: { inner: 1.04, outer: 1.52, color: "#e4c28c", opacity: 0.58 },
   },
   uranus: {
     base: [91, 166, 172],
@@ -171,55 +171,69 @@ function createPlanetTexture(
 function createPhotoTexture(
   THREE: typeof import("three"),
   image: HTMLImageElement,
-  planetId: string
+  planetId: string,
+  profile: PlanetProfile
 ) {
-  const isSaturn = planetId === "saturn";
+  void profile;
+  const size = 512;
   const canvas = document.createElement("canvas");
-  const width = isSaturn ? 640 : 512;
-  const height = isSaturn ? 310 : 512;
-  canvas.width = width;
-  canvas.height = height;
+  canvas.width = size;
+  canvas.height = size;
   const context = canvas.getContext("2d");
   if (!context) return null;
-
-  context.drawImage(image, 0, 0, width, height);
-  const pixels = context.getImageData(0, 0, width, height);
-  if (isSaturn) {
-    for (let index = 0; index < pixels.data.length; index += 4) {
-      const luminance =
-        pixels.data[index] * 0.2126 +
-        pixels.data[index + 1] * 0.7152 +
-        pixels.data[index + 2] * 0.0722;
-      pixels.data[index + 3] =
-        luminance < 16 ? 0 : Math.min(255, (luminance - 8) * 18);
-    }
-  } else {
-    const radius = width * 0.47;
-    const center = width / 2;
-    for (let y = 0; y < height; y += 1) {
-      for (let x = 0; x < width; x += 1) {
-        const distance = Math.hypot(x - center, y - center);
-        const pixelIndex = (y * width + x) * 4;
-        const luminance =
-          pixels.data[pixelIndex] * 0.2126 +
-          pixels.data[pixelIndex + 1] * 0.7152 +
-          pixels.data[pixelIndex + 2] * 0.0722;
-        const edgeAlpha = Math.max(
-          0,
-          Math.min(1, (radius + 5 - distance) / 10)
-        );
-        const backgroundAlpha = luminance < 12 ? 0 : 1;
-        pixels.data[pixelIndex + 3] = Math.round(
-          edgeAlpha * backgroundAlpha * 255
-        );
-      }
-    }
-  }
-  context.putImageData(pixels, 0, 0);
+  const imageWidth = image.naturalWidth || image.width;
+  const imageHeight = image.naturalHeight || image.height;
+  const smallest = Math.min(imageWidth, imageHeight);
+  const cropSize = planetId === "saturn" ? smallest * 0.48 : smallest;
+  const cropX = (imageWidth - cropSize) / 2;
+  const cropY = (imageHeight - cropSize) / 2;
+  context.drawImage(image, cropX, cropY, cropSize, cropSize, 0, 0, size, size);
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
   texture.needsUpdate = true;
   return texture;
+}
+
+function createProjectedPhotoMaterial(
+  THREE: typeof import("three"),
+  texture: import("three").Texture,
+  planetId: string
+) {
+  return new THREE.ShaderMaterial({
+    uniforms: {
+      uMap: { value: texture },
+      uOpacity: { value: planetId === "saturn" ? 0.18 : 0.36 },
+    },
+    transparent: true,
+    depthWrite: false,
+    vertexShader: `
+      varying vec3 vLocalPosition;
+      varying vec3 vLocalNormal;
+      void main() {
+        vLocalPosition = position;
+        vLocalNormal = normal;
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+      }
+    `,
+    fragmentShader: `
+      uniform sampler2D uMap;
+      uniform float uOpacity;
+      varying vec3 vLocalPosition;
+      varying vec3 vLocalNormal;
+      void main() {
+        vec3 normal = normalize(vLocalNormal);
+        float facing = smoothstep(0.02, 0.34, normal.z);
+        vec2 uv = vec2(0.5 + vLocalPosition.x * 0.5, 0.5 - vLocalPosition.y * 0.5);
+        vec4 photo = texture2D(uMap, clamp(uv, 0.0, 1.0));
+        float luminance = dot(photo.rgb, vec3(0.2126, 0.7152, 0.0722));
+        float photoMask = smoothstep(0.02, 0.14, luminance);
+        float alpha = facing * photoMask * uOpacity;
+        if (alpha < 0.01) discard;
+        float light = 0.72 + max(normal.z, 0.0) * 0.28;
+        gl_FragColor = vec4(photo.rgb * light, alpha);
+      }
+    `,
+  });
 }
 
 export default function CelestialGlobe({
@@ -248,7 +262,6 @@ export default function CelestialGlobe({
     const disposables: Array<{ dispose: () => void }> = [];
     const animatedGroups: Array<{ rotation: { y: number } }> = [];
     const profile = planetId ? planetProfiles[planetId] : undefined;
-    const photoTextureMode = Boolean(textureUrl?.startsWith("/manus-storage/"));
     const setFallback = (message: string) => {
       if (!disposed) setNotice(message);
     };
@@ -383,9 +396,6 @@ export default function CelestialGlobe({
             color: new THREE.Color(color),
             roughness: planetId === "moon" ? 0.95 : 0.72,
             metalness: 0.02,
-            transparent: photoTextureMode,
-            opacity: photoTextureMode ? 0.05 : 1,
-            depthWrite: !photoTextureMode,
           })
         );
         const surface = addGeometry(new THREE.SphereGeometry(1, 64, 48));
@@ -407,35 +417,27 @@ export default function CelestialGlobe({
                 loaded.dispose();
                 return;
               }
-              const photoTexture = createPhotoTexture(
-                THREE,
-                loaded.image,
-                planetId ?? ""
-              );
+              const photoTexture = profile
+                ? createPhotoTexture(
+                    THREE,
+                    loaded.image,
+                    planetId ?? "",
+                    profile
+                  )
+                : null;
               loaded.dispose();
               if (!photoTexture) return;
               disposables.push(photoTexture);
               const photoMaterial = addMaterial(
-                new THREE.MeshBasicMaterial({
-                  map: photoTexture,
-                  transparent: true,
-                  depthWrite: false,
-                  side: THREE.DoubleSide,
-                })
+                createProjectedPhotoMaterial(
+                  THREE,
+                  photoTexture,
+                  planetId ?? ""
+                )
               );
-              const isSaturn = planetId === "saturn";
-              const photo = new THREE.Mesh(
-                addGeometry(
-                  new THREE.PlaneGeometry(
-                    isSaturn ? 2.42 : 1.92,
-                    isSaturn ? 1.17 : 1.92
-                  )
-                ),
-                photoMaterial
-              );
-              photo.position.z = 1.01;
-              photo.renderOrder = 3;
-              add(photo);
+              const photoSurface = new THREE.Mesh(surface, photoMaterial);
+              photoSurface.renderOrder = 2;
+              add(photoSurface);
             },
             undefined,
             () => {
@@ -452,17 +454,13 @@ export default function CelestialGlobe({
               new THREE.MeshBasicMaterial({
                 color: new THREE.Color(profile.atmosphere),
                 transparent: true,
-                opacity: photoTextureMode
-                  ? 0.03
-                  : planetId === "moon"
-                    ? 0.04
-                    : 0.13,
+                opacity: planetId === "moon" ? 0.04 : 0.13,
                 side: THREE.BackSide,
               })
             )
           );
           add(atmosphere);
-          if (profile.ring && !textureUrl) {
+          if (profile.ring) {
             const ring = new THREE.Mesh(
               addGeometry(
                 new THREE.RingGeometry(
@@ -533,8 +531,11 @@ export default function CelestialGlobe({
       );
       scene.add(stars);
       animatedGroups.push(stars);
-      scene.add(new THREE.DirectionalLight(0xffe3b0, 2.2));
-      scene.add(new THREE.AmbientLight(0x2c4841, 0.48));
+      const keyLight = new THREE.DirectionalLight(0xffe3b0, 2.4);
+      keyLight.position.set(3, 2, 4);
+      scene.add(keyLight);
+      scene.add(new THREE.HemisphereLight(0xffe7c1, 0x14201e, 0.95));
+      scene.add(new THREE.AmbientLight(0x466257, 0.62));
 
       const resize = () => {
         if (!renderer || !camera) return;
