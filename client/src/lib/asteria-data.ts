@@ -137,7 +137,7 @@ export const objects: AstroObject[] = [
     related: ["earth", "moon", "scale-in-space"],
     source: "NASA · Explorarea Sistemului Solar · Prezentare Marte",
     sourceUrl: "https://science.nasa.gov/resource/planet-mars-3d-model/",
-    imageUrl: "/manus-storage/OSIRIS_Mars_true_color_7cba96d4.jpg",
+    imageUrl: "/manus-storage/OSIRIS_Mars_true_color_115df2f0.webp",
     textureUrl: "/manus-storage/OSIRIS_Mars_true_color_7cba96d4.jpg",
     imageCredit: "Colecția furnizată · NASA/JPL-Caltech",
     mission: {
@@ -213,7 +213,7 @@ export const objects: AstroObject[] = [
     related: ["earth", "mars", "light-travel-time"],
     source: "NASA · Fișa informativă a Lunii",
     sourceUrl: "https://science.nasa.gov/resource/moon-3d-model/",
-    imageUrl: "/manus-storage/FullMoon2010_6323acc3.jpg",
+    imageUrl: "/manus-storage/FullMoon2010_5e4a7e82.webp",
     textureUrl: "/manus-storage/FullMoon2010_6323acc3.jpg",
     imageCredit: "Colecția furnizată · NASA",
   }),
@@ -561,7 +561,7 @@ export const objects: AstroObject[] = [
       source: "NASA · Date despre Jupiter",
       sourceUrl: "https://science.nasa.gov/resource/jupiter-3d-model/",
       imageUrl:
-        "/manus-storage/Jupiter_and_its_shrunken_Great_Red_Spot_2fdf9f3c.jpg",
+        "/manus-storage/Jupiter_and_its_shrunken_Great_Red_Spot_02f7ce8c.webp",
       textureUrl:
         "/manus-storage/Jupiter_and_its_shrunken_Great_Red_Spot_2fdf9f3c.jpg",
       imageCredit: "Colecția furnizată · NASA/JPL-Caltech/SwRI/MSSS",
@@ -608,7 +608,7 @@ export const objects: AstroObject[] = [
       related: ["jupiter", "moon", "scale-in-space"],
       source: "NASA · Date despre Saturn",
       sourceUrl: "https://science.nasa.gov/resource/saturn-3d-model/",
-      imageUrl: "/manus-storage/Saturn_during_Equinox_76d6b2d7.jpg",
+      imageUrl: "/manus-storage/Saturn_during_Equinox_600ff65d.webp",
       textureUrl: "/manus-storage/Saturn_during_Equinox_76d6b2d7.jpg",
       imageCredit: "Colecția furnizată · NASA/JPL/SSI",
       mission: {

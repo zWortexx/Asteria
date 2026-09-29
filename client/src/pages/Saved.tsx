@@ -20,8 +20,6 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { toast } from "sonner";
-import CelestialGlobe from "../components/CelestialGlobe";
-import RocketMission from "../components/RocketMission";
 import {
   Atlas,
   ObjectCard,

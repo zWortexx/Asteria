@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { objects, type AstroObject } from "../lib/asteria-data";
 import { useMotion } from "../contexts/MotionContext";
+import "../mission.css";
 
 type MissionObject = AstroObject & {
   mission: NonNullable<AstroObject["mission"]>;
@@ -113,6 +114,8 @@ export default function RocketMission() {
             className={`mission-scene-image${failedImageId === selected.id ? " is-unavailable" : ""}`}
             src={mission.sceneImage}
             alt={mission.sceneImageAlt}
+            width={1600}
+            height={900}
             loading="lazy"
             decoding="async"
             onError={() => setFailedImageId(selected.id)}

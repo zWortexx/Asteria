@@ -3,8 +3,6 @@
 
 @import "./base.css";
 @import "./layout.css";
-@import "./atlas.css";
 @import "./library.css";
-@import "./detail.css";
-@import "./mission.css";
 @import "./accessibility.css";
+@import "./responsive.css";

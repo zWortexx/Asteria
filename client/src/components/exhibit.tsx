@@ -8,8 +8,8 @@ import {
   Play,
   RotateCcw,
 } from "lucide-react";
-import { useRef, useState } from "react";
-import CelestialGlobe from "./CelestialGlobe";
+import { memo, useMemo, useRef, useState } from "react";
+import { LazyCelestialGlobe as CelestialGlobe } from "./LazyScene";
 import { cx } from "../lib/utils";
 import {
   getRouteObjects,
@@ -259,7 +259,7 @@ export function Atlas({
   );
 }
 
-export function ObjectCard({
+export const ObjectCard = memo(function ObjectCard({
   item,
   saved,
   onToggleSave,
@@ -268,6 +268,10 @@ export function ObjectCard({
   saved?: boolean;
   onToggleSave?: (item: AstroObject) => void;
 }) {
+  const objectIndex = useMemo(
+    () => objects.findIndex(entry => entry.id === item.id) + 1,
+    [item.id]
+  );
   return (
     <article
       className="object-card"
@@ -294,9 +298,7 @@ export function ObjectCard({
           <span className="card-visual-orb" />
         )}
         <span className="card-index">
-          {String(
-            objects.findIndex(entry => entry.id === item.id) + 1
-          ).padStart(2, "0")}
+          {String(objectIndex).padStart(2, "0")}
         </span>
         <button
           className="save-button"
@@ -319,9 +321,9 @@ export function ObjectCard({
       </div>
     </article>
   );
-}
+});
 
-export function RouteCard({
+export const RouteCard = memo(function RouteCard({
   route,
   progress,
 }: {
@@ -376,4 +378,4 @@ export function RouteCard({
       </div>
     </article>
   );
-}
+});

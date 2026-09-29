@@ -1,4 +1,35 @@
 import { useEffect, useRef, useState } from "react";
+import {
+  AmbientLight,
+  BackSide,
+  Box3,
+  BufferAttribute,
+  BufferGeometry,
+  CircleGeometry,
+  Color,
+  DirectionalLight,
+  DoubleSide,
+  Float32BufferAttribute,
+  Group,
+  HemisphereLight,
+  LinearFilter,
+  LinearMipmapLinearFilter,
+  Mesh,
+  MeshBasicMaterial,
+  MeshStandardMaterial,
+  Object3D,
+  PerspectiveCamera,
+  Points,
+  PointsMaterial,
+  RingGeometry,
+  SRGBColorSpace,
+  Scene,
+  SphereGeometry,
+  Texture,
+  TextureLoader,
+  Vector3,
+  WebGLRenderer,
+} from "three";
 import type { GlobeKind } from "../lib/asteria-data";
 
 type CelestialGlobeProps = {
@@ -91,27 +122,29 @@ export default function CelestialGlobe({
     if (!mount) return;
     let disposed = false;
     let stop = false;
-    let renderer: import("three").WebGLRenderer | undefined;
-    let scene: import("three").Scene | undefined;
-    let camera: import("three").PerspectiveCamera | undefined;
+    let renderer: WebGLRenderer | undefined;
+    let scene: Scene | undefined;
+    let camera: PerspectiveCamera | undefined;
     let frame = 0;
-    let texture: import("three").Texture | undefined;
+    let texture: Texture | undefined;
     const disposables: Array<{ dispose: () => void }> = [];
     const animatedGroups: Array<{ rotation: { y: number } }> = [];
     const profile = planetId ? planetProfiles[planetId] : undefined;
     const modelUrl = planetId ? planetModelUrls[planetId] : undefined;
+    const mobileQuality = window.innerWidth < 740;
+    const sphereSegments = mobileQuality ? 40 : 64;
+    const atmosphereSegments = mobileQuality ? 28 : 48;
     const setFallback = (message: string) => {
       if (!disposed) setNotice(message);
     };
 
     const build = async () => {
-      const THREE = await import("three");
       if (disposed) return;
-      scene = new THREE.Scene();
-      camera = new THREE.PerspectiveCamera(32, 1, 0.1, 100);
+      scene = new Scene();
+      camera = new PerspectiveCamera(32, 1, 0.1, 100);
       camera.position.z = 3.2;
       try {
-        renderer = new THREE.WebGLRenderer({
+        renderer = new WebGLRenderer({
           alpha: true,
           antialias: true,
           powerPreference: "high-performance",
@@ -126,7 +159,7 @@ export default function CelestialGlobe({
       renderer.setClearColor(0x000000, 0);
       mount.appendChild(renderer.domElement);
       mount.classList.add("celestial-globe-webgl");
-      const group = new THREE.Group();
+      const group = new Group();
       group.scale.setScalar(
         size === "hero" ? 0.66 : size === "step" ? 0.78 : 0.76
       );
@@ -135,8 +168,8 @@ export default function CelestialGlobe({
       }
       scene.add(group);
       animatedGroups.push(group);
-      const add = (object: import("three").Object3D) => group.add(object);
-      const addGeometry = (geometry: import("three").BufferGeometry) => {
+      const add = (object: Object3D) => group.add(object);
+      const addGeometry = (geometry: BufferGeometry) => {
         disposables.push(geometry);
         return geometry;
       };
@@ -156,8 +189,8 @@ export default function CelestialGlobe({
             if (disposed) return;
             const model = gltf.scene;
             model.updateMatrixWorld(true);
-            const initialBounds = new THREE.Box3().setFromObject(model);
-            const dimensions = initialBounds.getSize(new THREE.Vector3());
+            const initialBounds = new Box3().setFromObject(model);
+            const dimensions = initialBounds.getSize(new Vector3());
             const largestDimension = Math.max(
               dimensions.x,
               dimensions.y,
@@ -165,10 +198,10 @@ export default function CelestialGlobe({
             );
             model.scale.setScalar(1.46 / Math.max(largestDimension, 0.001));
             model.updateMatrixWorld(true);
-            const centeredBounds = new THREE.Box3().setFromObject(model);
-            model.position.sub(centeredBounds.getCenter(new THREE.Vector3()));
+            const centeredBounds = new Box3().setFromObject(model);
+            model.position.sub(centeredBounds.getCenter(new Vector3()));
             model.traverse(object => {
-              if (object instanceof THREE.Mesh) {
+              if (object instanceof Mesh) {
                 object.frustumCulled = false;
                 object.castShadow = false;
                 object.receiveShadow = false;
@@ -180,17 +213,17 @@ export default function CelestialGlobe({
                     (planetId === "saturn" || planetId === "uranus") &&
                     /ring/i.test(material.name)
                   ) {
-                    return new THREE.MeshBasicMaterial({
+                    return new MeshBasicMaterial({
                       map: material.map,
                       color: material.color,
                       transparent: true,
                       opacity: 0.96,
                       alphaTest: 0.01,
                       depthWrite: false,
-                      side: THREE.DoubleSide,
+                      side: DoubleSide,
                     });
                   }
-                  material.side = THREE.DoubleSide;
+                  material.side = DoubleSide;
                   return material;
                 });
                 object.material =
@@ -204,7 +237,7 @@ export default function CelestialGlobe({
             disposables.push({
               dispose: () => {
                 model.traverse(object => {
-                  if (object instanceof THREE.Mesh) {
+                  if (object instanceof Mesh) {
                     object.geometry.dispose();
                     const materials = Array.isArray(object.material)
                       ? object.material
@@ -223,7 +256,7 @@ export default function CelestialGlobe({
         );
       } else if (globeKind === "galaxy") {
         const points: number[] = [];
-        for (let i = 0; i < 520; i += 1) {
+        for (let i = 0; i < (mobileQuality ? 260 : 520); i += 1) {
           const arm = i % 4;
           const radius = 0.08 + Math.random() * 1.1;
           const angle =
@@ -234,17 +267,17 @@ export default function CelestialGlobe({
             Math.sin(angle) * radius * 0.52
           );
         }
-        const geometry = addGeometry(new THREE.BufferGeometry());
+        const geometry = addGeometry(new BufferGeometry());
         geometry.setAttribute(
           "position",
-          new THREE.Float32BufferAttribute(points, 3)
+          new Float32BufferAttribute(points, 3)
         );
         add(
-          new THREE.Points(
+          new Points(
             geometry,
             addMaterial(
-              new THREE.PointsMaterial({
-                color: new THREE.Color(accent),
+              new PointsMaterial({
+                color: new Color(accent),
                 size: 0.025,
                 transparent: true,
                 opacity: 0.9,
@@ -253,55 +286,63 @@ export default function CelestialGlobe({
           )
         );
         add(
-          new THREE.Mesh(
-            addGeometry(new THREE.CircleGeometry(0.14, 32)),
-            addMaterial(
-              new THREE.MeshBasicMaterial({ color: new THREE.Color("#fff3cc") })
-            )
+          new Mesh(
+            addGeometry(new CircleGeometry(0.14, mobileQuality ? 16 : 32)),
+            addMaterial(new MeshBasicMaterial({ color: new Color("#fff3cc") }))
           )
         );
         group.rotation.x = -0.3;
       } else if (globeKind === "star") {
         add(
-          new THREE.Mesh(
-            addGeometry(new THREE.SphereGeometry(0.55, 32, 32)),
-            addMaterial(
-              new THREE.MeshBasicMaterial({ color: new THREE.Color(accent) })
-            )
+          new Mesh(
+            addGeometry(
+              new SphereGeometry(
+                0.55,
+                mobileQuality ? 20 : 32,
+                mobileQuality ? 20 : 32
+              )
+            ),
+            addMaterial(new MeshBasicMaterial({ color: new Color(accent) }))
           )
         );
         add(
-          new THREE.Mesh(
-            addGeometry(new THREE.SphereGeometry(0.82, 32, 32)),
+          new Mesh(
+            addGeometry(
+              new SphereGeometry(
+                0.82,
+                mobileQuality ? 20 : 32,
+                mobileQuality ? 20 : 32
+              )
+            ),
             addMaterial(
-              new THREE.MeshBasicMaterial({
-                color: new THREE.Color(accent),
+              new MeshBasicMaterial({
+                color: new Color(accent),
                 transparent: true,
                 opacity: 0.12,
-                side: THREE.BackSide,
+                side: BackSide,
               })
             )
           )
         );
       } else if (globeKind === "field") {
         const points: number[] = [];
-        for (let i = 0; i < 110; i += 1)
+        for (let i = 0; i < (mobileQuality ? 60 : 110); i += 1)
           points.push(
             (Math.random() - 0.5) * 2.3,
             (Math.random() - 0.5) * 1.5,
             (Math.random() - 0.5) * 0.25
           );
-        const geometry = addGeometry(new THREE.BufferGeometry());
+        const geometry = addGeometry(new BufferGeometry());
         geometry.setAttribute(
           "position",
-          new THREE.Float32BufferAttribute(points, 3)
+          new Float32BufferAttribute(points, 3)
         );
         add(
-          new THREE.Points(
+          new Points(
             geometry,
             addMaterial(
-              new THREE.PointsMaterial({
-                color: new THREE.Color(accent),
+              new PointsMaterial({
+                color: new Color(accent),
                 size: 0.035,
               })
             )
@@ -310,18 +351,20 @@ export default function CelestialGlobe({
       } else {
         const material = addMaterial(
           textureUrl
-            ? new THREE.MeshBasicMaterial({ color: 0xffffff })
-            : new THREE.MeshStandardMaterial({
-                color: new THREE.Color(color),
+            ? new MeshBasicMaterial({ color: 0xffffff })
+            : new MeshStandardMaterial({
+                color: new Color(color),
                 roughness: planetId === "moon" ? 0.95 : 0.72,
                 metalness: 0.02,
               })
         );
-        const surface = addGeometry(new THREE.SphereGeometry(1, 64, 48));
-        const planetMesh = new THREE.Mesh(surface, material);
+        const surface = addGeometry(
+          new SphereGeometry(1, sphereSegments, mobileQuality ? 30 : 48)
+        );
+        const planetMesh = new Mesh(surface, material);
         add(planetMesh);
         if (textureUrl) {
-          const loader = new THREE.TextureLoader();
+          const loader = new TextureLoader();
           loader.setCrossOrigin("anonymous");
           loader.load(
             textureUrl,
@@ -330,11 +373,11 @@ export default function CelestialGlobe({
                 loaded.dispose();
                 return;
               }
-              loaded.colorSpace = THREE.SRGBColorSpace;
+              loaded.colorSpace = SRGBColorSpace;
               loaded.anisotropy =
                 renderer?.capabilities.getMaxAnisotropy() ?? 1;
-              loaded.minFilter = THREE.LinearMipmapLinearFilter;
-              loaded.magFilter = THREE.LinearFilter;
+              loaded.minFilter = LinearMipmapLinearFilter;
+              loaded.magFilter = LinearFilter;
               disposables.push(loaded);
               material.map = loaded;
               material.color.set(0xffffff);
@@ -349,33 +392,39 @@ export default function CelestialGlobe({
           );
         }
         if (profile && !textureUrl) {
-          const atmosphere = new THREE.Mesh(
-            addGeometry(new THREE.SphereGeometry(1.075, 48, 32)),
+          const atmosphere = new Mesh(
+            addGeometry(
+              new SphereGeometry(
+                1.075,
+                atmosphereSegments,
+                mobileQuality ? 20 : 32
+              )
+            ),
             addMaterial(
-              new THREE.MeshBasicMaterial({
-                color: new THREE.Color(profile.atmosphere),
+              new MeshBasicMaterial({
+                color: new Color(profile.atmosphere),
                 transparent: true,
                 opacity: planetId === "moon" ? 0.04 : 0.13,
-                side: THREE.BackSide,
+                side: BackSide,
               })
             )
           );
           add(atmosphere);
           if (profile.ring) {
-            const ring = new THREE.Mesh(
+            const ring = new Mesh(
               addGeometry(
-                new THREE.RingGeometry(
+                new RingGeometry(
                   profile.ring.inner,
                   profile.ring.outer,
-                  128
+                  mobileQuality ? 64 : 128
                 )
               ),
               addMaterial(
-                new THREE.MeshBasicMaterial({
-                  color: new THREE.Color(profile.ring.color),
+                new MeshBasicMaterial({
+                  color: new Color(profile.ring.color),
                   transparent: true,
                   opacity: profile.ring.opacity,
-                  side: THREE.DoubleSide,
+                  side: DoubleSide,
                 })
               )
             );
@@ -386,28 +435,29 @@ export default function CelestialGlobe({
       }
 
       if (!modelUrl && globeKind !== "star" && !profile) {
-        const rim = new THREE.Mesh(
+        const rim = new Mesh(
           addGeometry(
-            new THREE.SphereGeometry(
+            new SphereGeometry(
               globeKind === "sphere" ? 1.045 : 1.16,
-              32,
-              32
+              mobileQuality ? 20 : 32,
+              mobileQuality ? 20 : 32
             )
           ),
           addMaterial(
-            new THREE.MeshBasicMaterial({
-              color: new THREE.Color(accent),
+            new MeshBasicMaterial({
+              color: new Color(accent),
               transparent: true,
               opacity: 0.18,
-              side: THREE.BackSide,
+              side: BackSide,
             })
           )
         );
         add(rim);
       }
-      const starGeometry = addGeometry(new THREE.BufferGeometry());
-      const starPositions = new Float32Array(180 * 3);
-      for (let index = 0; index < 180; index += 1) {
+      const starGeometry = addGeometry(new BufferGeometry());
+      const starCount = mobileQuality ? 90 : 180;
+      const starPositions = new Float32Array(starCount * 3);
+      for (let index = 0; index < starCount; index += 1) {
         const radius = 2.3 + Math.random() * 1.4;
         const theta = Math.random() * Math.PI * 2;
         const phi = Math.acos(Math.random() * 2 - 1);
@@ -417,12 +467,12 @@ export default function CelestialGlobe({
       }
       starGeometry.setAttribute(
         "position",
-        new THREE.BufferAttribute(starPositions, 3)
+        new BufferAttribute(starPositions, 3)
       );
-      const stars = new THREE.Points(
+      const stars = new Points(
         starGeometry,
         addMaterial(
-          new THREE.PointsMaterial({
+          new PointsMaterial({
             color: 0xd9eadc,
             size: 0.018,
             transparent: true,
@@ -432,11 +482,11 @@ export default function CelestialGlobe({
       );
       scene.add(stars);
       animatedGroups.push(stars);
-      const keyLight = new THREE.DirectionalLight(0xffe3b0, 2.4);
+      const keyLight = new DirectionalLight(0xffe3b0, 2.4);
       keyLight.position.set(3, 2, 4);
       scene.add(keyLight);
-      scene.add(new THREE.HemisphereLight(0xffe7c1, 0x14201e, 0.95));
-      scene.add(new THREE.AmbientLight(0x466257, 0.62));
+      scene.add(new HemisphereLight(0xffe7c1, 0x14201e, 0.95));
+      scene.add(new AmbientLight(0x466257, 0.62));
 
       const resize = () => {
         if (!renderer || !camera) return;
@@ -452,23 +502,27 @@ export default function CelestialGlobe({
       resizeObserver.observe(mount);
       const visibilityObserver = new IntersectionObserver(
         ([entry]) => {
-          stop = !entry?.isIntersecting;
+          stop = !entry?.isIntersecting || document.hidden;
+          if (!stop && !frame) frame = requestAnimationFrame(render);
         },
         { threshold: 0.01 }
       );
       visibilityObserver.observe(mount);
       const onVisibility = () => {
         stop = document.hidden;
+        if (!stop && !frame) frame = requestAnimationFrame(render);
       };
       document.addEventListener("visibilitychange", onVisibility);
       const render = () => {
-        if (!disposed) frame = requestAnimationFrame(render);
-        if (!renderer || !scene || !camera || stop) return;
+        frame = 0;
+        if (disposed || stop) return;
+        if (!renderer || !scene || !camera) return;
         if (motionEnabled) {
           animatedGroups[0].rotation.y += 0.0022;
           animatedGroups[1].rotation.y -= 0.0007;
         }
         renderer.render(scene, camera);
+        frame = requestAnimationFrame(render);
       };
       frame = requestAnimationFrame(render);
       (mount as HTMLDivElement & { __cleanup?: () => void }).__cleanup = () => {

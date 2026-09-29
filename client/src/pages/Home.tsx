@@ -9,12 +9,13 @@ import {
   Sparkles,
 } from "lucide-react";
 import { toast } from "sonner";
-import CelestialGlobe from "../components/CelestialGlobe";
-import RocketMission from "../components/RocketMission";
+import { LazyCelestialGlobe as CelestialGlobe } from "../components/LazyScene";
+import { LazyRocketMission as RocketMission } from "../components/LazyScene";
 import { Atlas, ObjectCard, RouteCard } from "../components/exhibit";
 import { useLocalState } from "../hooks/useLocalState";
 import { useMotion } from "../contexts/MotionContext";
 import { cx } from "../lib/utils";
+import "../atlas.css";
 import {
   featuredObject,
   getObject,

@@ -20,8 +20,7 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { toast } from "sonner";
-import CelestialGlobe from "../components/CelestialGlobe";
-import RocketMission from "../components/RocketMission";
+import { LazyCelestialGlobe as CelestialGlobe } from "../components/LazyScene";
 import {
   Atlas,
   ObjectCard,
@@ -31,6 +30,8 @@ import {
 import { useLocalState } from "../hooks/useLocalState";
 import { useMotion } from "../contexts/MotionContext";
 import { cx } from "../lib/utils";
+import "../detail.css";
+import "../responsive.css";
 import {
   aboutContact,
   aboutSections,
@@ -141,6 +142,8 @@ function ObjectPage({ item }: { item: AstroObject }) {
                 className="detail-exhibit-photo"
                 src={item.imageUrl}
                 alt={item.alt}
+                width={600}
+                height={420}
                 loading="lazy"
                 decoding="async"
               />

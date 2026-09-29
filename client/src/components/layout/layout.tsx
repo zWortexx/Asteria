@@ -5,6 +5,7 @@ import { Toaster } from "sonner";
 import { initDomAnimations } from "../../lib/dom-animations";
 import { useMotion } from "../../contexts/MotionContext";
 import { cx } from "../../lib/utils";
+import { prefetchRoute } from "../../lib/route-preload";
 import {
   emptySearchBody,
   emptySearchTitle,
@@ -45,6 +46,8 @@ export function Header({
             <Link
               key={item.href}
               href={item.href}
+              onMouseEnter={() => prefetchRoute(item.href)}
+              onFocus={() => prefetchRoute(item.href)}
               className={cx(
                 "nav-link",
                 (item.href === "/"
@@ -99,7 +102,12 @@ export function Footer() {
           <p className="eyebrow">Navigare</p>
           <div className="footer-links">
             {footerLinks.map(item => (
-              <Link key={item.href} href={item.href}>
+              <Link
+                key={item.href}
+                href={item.href}
+                onMouseEnter={() => prefetchRoute(item.href)}
+                onFocus={() => prefetchRoute(item.href)}
+              >
                 {item.label}
                 <ArrowUpRight size={13} />
               </Link>
@@ -313,6 +321,8 @@ export function MobileMenu({ onClose }: { onClose: () => void }) {
             onClick={onClose}
             key={item.href}
             href={item.href}
+            onMouseEnter={() => prefetchRoute(item.href)}
+            onFocus={() => prefetchRoute(item.href)}
             className="drawer-link"
           >
             <span>{item.short}</span>

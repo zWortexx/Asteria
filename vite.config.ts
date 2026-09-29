@@ -77,6 +77,19 @@ export default defineConfig({
   build: {
     outDir: path.resolve(import.meta.dirname, "dist/public"),
     emptyOutDir: true,
+    target: "es2022",
+    minify: "esbuild",
+    cssCodeSplit: true,
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (!id.includes("node_modules")) return;
+          if (/[\\/]react(?:-dom)?[\\/]/.test(id)) return "react";
+          if (id.includes("/three/") || id.includes("three\\")) return "three";
+          return "vendor";
+        },
+      },
+    },
   },
   server: {
     port: 3000,

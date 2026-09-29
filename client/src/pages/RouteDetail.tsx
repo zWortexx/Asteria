@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import { Link } from "wouter";
 import { ArrowUpRight, Check, ChevronRight, Telescope } from "lucide-react";
-import CelestialGlobe from "../components/CelestialGlobe";
+import { LazyCelestialGlobe as CelestialGlobe } from "../components/LazyScene";
 import { useLocalState } from "../hooks/useLocalState";
 import { useMotion } from "../contexts/MotionContext";
 import { cx } from "../lib/utils";
+import "../detail.css";
+import "../responsive.css";
 import {
   getRouteObjects,
   getRouteProgress,
