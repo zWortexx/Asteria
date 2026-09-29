@@ -6,7 +6,8 @@ import { MotionProvider } from "./contexts/MotionContext";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { getObject, getRoute, type AstroRoute } from "./lib/asteria-data";
 
-const Home = lazy(() => import("./pages/Home"));
+const homePage = import("./pages/Home");
+const Home = lazy(() => homePage);
 const Tonight = lazy(() => import("./pages/Tonight"));
 const RoutesPage = lazy(() => import("./pages/Routes"));
 const RouteDetail = lazy(() => import("./pages/RouteDetail"));

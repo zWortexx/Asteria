@@ -1,10 +1,20 @@
 import { createRoot } from "react-dom/client";
 import App from "./App";
 import "./index.css";
-import { initDomAnimations } from "./lib/dom-animations";
 
 createRoot(document.getElementById("root")!).render(<App />);
-window.requestAnimationFrame(() => initDomAnimations());
+
+const loadAnimations = () => {
+  void import("./lib/dom-animations").then(({ initDomAnimations }) => {
+    initDomAnimations();
+  });
+};
+
+if (typeof window.requestIdleCallback === "function") {
+  window.requestIdleCallback(loadAnimations, { timeout: 1200 });
+} else {
+  window.setTimeout(loadAnimations, 250);
+}
 
 const loadAnalytics = () => {
   const analyticsEndpoint = import.meta.env.VITE_ANALYTICS_ENDPOINT;

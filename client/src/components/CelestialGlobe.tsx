@@ -42,6 +42,7 @@ type CelestialGlobeProps = {
   motionEnabled?: boolean;
   size?: "hero" | "detail" | "step";
   lazy?: boolean;
+  defer?: boolean;
 };
 
 type PlanetProfile = {
@@ -113,6 +114,7 @@ export default function CelestialGlobe({
   motionEnabled = true,
   size = "detail",
   lazy = false,
+  defer = false,
 }: CelestialGlobeProps) {
   const mountRef = useRef<HTMLDivElement>(null);
   const [notice, setNotice] = useState<string | null>(null);
@@ -532,7 +534,18 @@ export default function CelestialGlobe({
       };
     };
     let loadObserver: IntersectionObserver | undefined;
-    const startBuild = () => void build();
+    const startBuild = () => {
+      if (!defer) {
+        void build();
+        return;
+      }
+      const run = () => void build();
+      if (typeof window.requestIdleCallback === "function") {
+        window.requestIdleCallback(run, { timeout: 1200 });
+      } else {
+        window.setTimeout(run, 180);
+      }
+    };
     if (lazy && "IntersectionObserver" in window) {
       loadObserver = new IntersectionObserver(
         ([entry]) => {
@@ -569,6 +582,7 @@ export default function CelestialGlobe({
     planetId,
     size,
     textureUrl,
+    defer,
   ]);
 
   return (

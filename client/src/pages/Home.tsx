@@ -105,6 +105,7 @@ function Home() {
                 motionEnabled={!staticView}
                 textureAlt={`${heroPlanet.name}, model 3D NASA interactiv`}
                 size="hero"
+                defer
               />
             </div>
             <div className="hero-card-footer">
