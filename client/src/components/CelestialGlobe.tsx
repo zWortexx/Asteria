@@ -10,6 +10,7 @@ type CelestialGlobeProps = {
   planetId?: string;
   motionEnabled?: boolean;
   size?: "hero" | "detail" | "step";
+  lazy?: boolean;
 };
 
 type PlanetProfile = {
@@ -60,10 +61,15 @@ const getDpr = () =>
     : Math.min(window.devicePixelRatio, 2);
 
 const planetModelUrls: Record<string, string> = {
-  mars: "/manus-storage/mars_3e4fdb3f.glb",
+  mercury: "/manus-storage/mercury_868be0f9.glb",
+  venus: "/manus-storage/venus_b21729cd.glb",
+  earth: "/manus-storage/earth_cca723c9.glb",
+  mars: "/manus-storage/mars_95dc8ddb.glb",
   moon: "/manus-storage/moon_b188d926.glb",
-  jupiter: "/manus-storage/jupiter_48530f41.glb",
-  saturn: "/manus-storage/saturn_8bf7f89b.glb",
+  jupiter: "/manus-storage/jupiter_665e4aeb.glb",
+  saturn: "/manus-storage/saturn_ff700d66.glb",
+  uranus: "/manus-storage/uranus_0b45b74c.glb",
+  neptune: "/manus-storage/neptune_fc13bdbd.glb",
 };
 
 export default function CelestialGlobe({
@@ -75,6 +81,7 @@ export default function CelestialGlobe({
   planetId,
   motionEnabled = true,
   size = "detail",
+  lazy = false,
 }: CelestialGlobeProps) {
   const mountRef = useRef<HTMLDivElement>(null);
   const [notice, setNotice] = useState<string | null>(null);
@@ -169,7 +176,10 @@ export default function CelestialGlobe({
                   ? object.material
                   : [object.material];
                 const preparedMaterials = materials.map(material => {
-                  if (planetId === "saturn" && /ring/i.test(material.name)) {
+                  if (
+                    (planetId === "saturn" || planetId === "uranus") &&
+                    /ring/i.test(material.name)
+                  ) {
                     return new THREE.MeshBasicMaterial({
                       map: material.map,
                       color: material.color,
@@ -375,7 +385,7 @@ export default function CelestialGlobe({
         }
       }
 
-      if (globeKind !== "star" && !profile) {
+      if (!modelUrl && globeKind !== "star" && !profile) {
         const rim = new THREE.Mesh(
           addGeometry(
             new THREE.SphereGeometry(
@@ -467,9 +477,26 @@ export default function CelestialGlobe({
         document.removeEventListener("visibilitychange", onVisibility);
       };
     };
-    void build();
+    let loadObserver: IntersectionObserver | undefined;
+    const startBuild = () => void build();
+    if (lazy && "IntersectionObserver" in window) {
+      loadObserver = new IntersectionObserver(
+        ([entry]) => {
+          if (entry?.isIntersecting) {
+            loadObserver?.disconnect();
+            loadObserver = undefined;
+            startBuild();
+          }
+        },
+        { rootMargin: "240px" }
+      );
+      loadObserver.observe(mount);
+    } else {
+      startBuild();
+    }
     return () => {
       disposed = true;
+      loadObserver?.disconnect();
       cancelAnimationFrame(frame);
       (mount as HTMLDivElement & { __cleanup?: () => void }).__cleanup?.();
       texture?.dispose();
@@ -479,7 +506,16 @@ export default function CelestialGlobe({
         mount.removeChild(renderer.domElement);
       mount.classList.remove("celestial-globe-webgl");
     };
-  }, [accent, color, globeKind, motionEnabled, planetId, size, textureUrl]);
+  }, [
+    accent,
+    color,
+    globeKind,
+    lazy,
+    motionEnabled,
+    planetId,
+    size,
+    textureUrl,
+  ]);
 
   return (
     <div

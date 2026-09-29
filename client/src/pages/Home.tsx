@@ -19,12 +19,24 @@ import {
   featuredObject,
   getObject,
   heroCopy,
+  isPlanetObject,
   localProgressKey,
   localSaveKey,
   objects,
   routes,
   type AstroObject,
 } from "../lib/asteria-data";
+
+const planetOrder = [
+  "mercury",
+  "venus",
+  "earth",
+  "mars",
+  "jupiter",
+  "saturn",
+  "uranus",
+  "neptune",
+];
 
 function Home() {
   const [selectedId, setSelectedId] = useState("mars");
@@ -35,6 +47,12 @@ function Home() {
     {}
   );
   const selected = getObject(selectedId) ?? featuredObject;
+  const heroPlanet = isPlanetObject(selected.id)
+    ? selected
+    : (getObject("earth") ?? featuredObject);
+  const planets = planetOrder
+    .map(id => getObject(id))
+    .filter((item): item is AstroObject => Boolean(item));
   const toggleSave = (item: AstroObject) => {
     setSaved(current =>
       current.includes(item.id)
@@ -78,19 +96,35 @@ function Home() {
             <span className="eyebrow">Orientare curentă / studiu 3D</span>
             <div className="hero-orbit-graphic">
               <CelestialGlobe
-                color="#3b7891"
-                accent="#9ed4bd"
-                textureUrl={getObject("earth")?.textureUrl}
-                planetId="earth"
-                globeKind="sphere"
+                color={heroPlanet.color}
+                accent={heroPlanet.accent}
+                textureUrl={heroPlanet.textureUrl}
+                planetId={heroPlanet.id}
+                globeKind={heroPlanet.globeKind}
                 motionEnabled={!staticView}
-                textureAlt="Textură a globului Pământului de la Observatorul Terestru NASA, redată pe un Pământ 3D rotativ"
+                textureAlt={`${heroPlanet.name}, model 3D NASA interactiv`}
                 size="hero"
               />
             </div>
             <div className="hero-card-footer">
-              <span>Atlas · 05h 35m</span>
-              <span></span>
+              <span>{heroPlanet.name} · model 3D NASA</span>
+              <span>rotește</span>
+            </div>
+            <div className="hero-planet-switcher" aria-label="Alege planeta">
+              {planets.map(planet => (
+                <button
+                  key={planet.id}
+                  type="button"
+                  className={cx(
+                    "hero-planet-button",
+                    planet.id === heroPlanet.id && "is-active"
+                  )}
+                  onClick={() => setSelectedId(planet.id)}
+                  aria-label={`Arată modelul 3D pentru ${planet.name}`}
+                >
+                  {planet.name}
+                </button>
+              ))}
             </div>
           </div>
         </div>

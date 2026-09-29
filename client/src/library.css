@@ -66,8 +66,22 @@
     inset -15px -15px 20px rgba(12, 32, 28, 0.3),
     0 10px 25px rgba(23, 50, 43, 0.2);
 }
+.card-visual .celestial-globe {
+  position: absolute;
+  inset: 0;
+  min-height: 178px;
+  height: 178px;
+  z-index: 0;
+}
+.card-visual .celestial-globe canvas {
+  min-height: 178px;
+}
+.card-visual .celestial-globe-fallback {
+  opacity: 0.42;
+}
 .card-index {
   position: absolute;
+  z-index: 3;
   left: 14px;
   top: 13px;
   font:
@@ -77,6 +91,7 @@
 }
 .save-button {
   position: absolute;
+  z-index: 3;
   top: 9px;
   right: 9px;
   background: rgba(238, 234, 218, 0.72);

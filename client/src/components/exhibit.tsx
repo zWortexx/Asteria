@@ -9,11 +9,13 @@ import {
   RotateCcw,
 } from "lucide-react";
 import { useRef, useState } from "react";
+import CelestialGlobe from "./CelestialGlobe";
 import { cx } from "../lib/utils";
 import {
   getRouteObjects,
   objects,
   sceneInstruction,
+  isPlanetObject,
   type AstroObject,
   type AstroRoute,
 } from "../lib/asteria-data";
@@ -277,7 +279,20 @@ export function ObjectCard({
       }
     >
       <div className="card-visual">
-        <span className="card-visual-orb" />
+        {isPlanetObject(item.id) ? (
+          <CelestialGlobe
+            color={item.color}
+            accent={item.accent}
+            planetId={item.id}
+            globeKind={item.globeKind}
+            motionEnabled={false}
+            lazy
+            size="step"
+            textureAlt={`${item.name}, model 3D NASA`}
+          />
+        ) : (
+          <span className="card-visual-orb" />
+        )}
         <span className="card-index">
           {String(
             objects.findIndex(entry => entry.id === item.id) + 1

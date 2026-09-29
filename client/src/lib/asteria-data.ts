@@ -81,6 +81,20 @@ const globeKinds: Record<string, GlobeKind> = {
   "star-life": "field",
 };
 
+export const planetObjectIds = [
+  "mercury",
+  "venus",
+  "earth",
+  "mars",
+  "jupiter",
+  "saturn",
+  "uranus",
+  "neptune",
+] as const;
+
+export const isPlanetObject = (id: string) =>
+  (planetObjectIds as readonly string[]).includes(id);
+
 const record = (
   item: Omit<AstroObject, "verifiedOn" | "layers" | "globeKind"> & {
     globeKind?: GlobeKind;
@@ -122,6 +136,7 @@ export const objects: AstroObject[] = [
     coordinates: { left: "27%", top: "46%", size: "clamp(132px, 18vw, 240px)" },
     related: ["earth", "moon", "scale-in-space"],
     source: "NASA · Explorarea Sistemului Solar · Prezentare Marte",
+    sourceUrl: "https://science.nasa.gov/resource/planet-mars-3d-model/",
     imageUrl: "/manus-storage/OSIRIS_Mars_true_color_7cba96d4.jpg",
     textureUrl: "/manus-storage/OSIRIS_Mars_true_color_7cba96d4.jpg",
     imageCredit: "Colecția furnizată · NASA/JPL-Caltech",
@@ -164,6 +179,7 @@ export const objects: AstroObject[] = [
     coordinates: { left: "70%", top: "62%", size: "clamp(116px, 15vw, 200px)" },
     related: ["moon", "mars", "light-travel-time"],
     source: "Observatorul Terestru NASA · Date despre Pământ",
+    sourceUrl: "https://science.nasa.gov/learn/heat/resource/earth-3d-model/",
     imageUrl:
       "https://eoimages.gsfc.nasa.gov/images/imagerecords/57000/57730/globe_west_2048.jpg",
     imageCredit: "Observatorul Terestru NASA",
@@ -196,9 +212,130 @@ export const objects: AstroObject[] = [
     coordinates: { left: "53%", top: "28%", size: "clamp(72px, 10vw, 126px)" },
     related: ["earth", "mars", "light-travel-time"],
     source: "NASA · Fișa informativă a Lunii",
+    sourceUrl: "https://science.nasa.gov/resource/moon-3d-model/",
     imageUrl: "/manus-storage/FullMoon2010_6323acc3.jpg",
     textureUrl: "/manus-storage/FullMoon2010_6323acc3.jpg",
     imageCredit: "Colecția furnizată · NASA",
+  }),
+  record({
+    id: "mercury",
+    slug: "mercury",
+    name: "Mercur",
+    commonName: "Lumea cea mai apropiată de Soare",
+    family: "Lumi și luni",
+    eyebrow: "O lume mică / prima orbită",
+    summary:
+      "Mercur este o planetă stâncoasă, mică și densă, cu diferențe extreme între zi și noapte și o suprafață marcată de impacturi.",
+    body: "Mercur se rotește lent, dar se deplasează rapid pe orbita sa. Fără o atmosferă consistentă care să păstreze căldura, suprafața trece prin schimbări termice radicale între partea luminată și cea întunecată.",
+    facts: [
+      { label: "Distanța medie", value: "58 milioane km" },
+      { label: "Durata zilei", value: "58,6 zile terestre" },
+      { label: "Luni", value: "0" },
+      { label: "Tip", value: "Planetă stâncoasă" },
+    ],
+    scale: "Aproximativ 38% din diametrul Pământului",
+    scaleNote:
+      "Modelul păstrează proporțiile planetei, nu și distanța orbitală față de Soare.",
+    visualMode: "Scară relativă",
+    visualCaption:
+      "Un Mercur craterizat, redat prin modelul 3D NASA; scara orbitală este comprimată.",
+    alt: "Model 3D gri-brun al planetei Mercur, cu suprafață craterizată.",
+    color: "#8d8880",
+    accent: "#d4c5a2",
+    coordinates: { left: "19%", top: "36%", size: "clamp(90px, 12vw, 155px)" },
+    related: ["venus", "earth", "mars"],
+    source: "NASA · Mercury 3D Model",
+    sourceUrl: "https://science.nasa.gov/resource/mercury-3d-model/",
+  }),
+  record({
+    id: "venus",
+    slug: "venus",
+    name: "Venus",
+    commonName: "Lumea norilor groși",
+    family: "Lumi și luni",
+    eyebrow: "O seră planetară / a doua orbită",
+    summary:
+      "Venus este învelită într-o atmosferă densă de dioxid de carbon și nori de acid sulfuric, cu cea mai fierbinte suprafață dintre planetele stâncoase.",
+    body: "Venus arată calm de la distanță, dar atmosfera sa creează presiuni și temperaturi extreme la sol. Modelul 3D ajută la separarea sferei vizibile de straturile atmosferice care îi ascund suprafața.",
+    facts: [
+      { label: "Distanța medie", value: "108 milioane km" },
+      { label: "Temperatura la sol", value: "Aproximativ 465°C" },
+      { label: "Luni", value: "0" },
+      { label: "Atmosferă", value: "CO₂ și nori de acid sulfuric" },
+    ],
+    scale: "Aproape cât Pământul ca diametru",
+    scaleNote:
+      "Modelul este mărit pentru lizibilitate; norii și atmosfera nu sunt o fotografie în timp real.",
+    visualMode: "Ilustrativ",
+    visualCaption:
+      "Un model Venus cu tonuri calde și textură NASA; atmosfera este interpretată vizual.",
+    alt: "Model 3D galben-auriu al planetei Venus, cu o suprafață acoperită de nori.",
+    color: "#c9a35b",
+    accent: "#f1d596",
+    coordinates: { left: "34%", top: "62%", size: "clamp(108px, 14vw, 185px)" },
+    related: ["mercury", "earth", "mars"],
+    source: "NASA · Venus 3D Model",
+    sourceUrl: "https://science.nasa.gov/resource/venus-3d-model/",
+  }),
+  record({
+    id: "uranus",
+    slug: "uranus",
+    name: "Uranus",
+    commonName: "Gigantul de gheață înclinat",
+    family: "Lumi și luni",
+    eyebrow: "O lume laterală / a șaptea orbită",
+    summary:
+      "Uranus este un gigant de gheață cu o nuanță albastru-verzuie și o axă de rotație atât de înclinată încât pare să se rostogolească pe orbită.",
+    body: "Metanul din atmosfera lui Uranus absoarbe lumina roșie și lasă să domine tonurile albastre. Înclinarea extremă produce anotimpuri neobișnuite, întinse pe zeci de ani pământești.",
+    facts: [
+      { label: "Distanța medie", value: "2,87 miliarde km" },
+      { label: "Anul uranian", value: "84 ani pământești" },
+      { label: "Luni cunoscute", value: "28" },
+      { label: "Tip", value: "Gigant de gheață" },
+    ],
+    scale: "De aproximativ patru ori mai lat decât Pământul",
+    scaleNote:
+      "Inelele subțiri și axa înclinată sunt păstrate în modelul 3D atunci când datele sunt disponibile.",
+    visualMode: "Scară relativă",
+    visualCaption:
+      "Uranus în cyan rece, cu orientarea axială și eventualele inele păstrate de modelul NASA.",
+    alt: "Model 3D cyan-albăstrui al lui Uranus, cu o atmosferă netedă și inele fine.",
+    color: "#70b8bc",
+    accent: "#b8e4df",
+    coordinates: { left: "77%", top: "42%", size: "clamp(105px, 13vw, 176px)" },
+    related: ["saturn", "neptune", "jupiter"],
+    source: "NASA · Uranus 3D Model",
+    sourceUrl: "https://science.nasa.gov/resource/uranus-3d-model/",
+  }),
+  record({
+    id: "neptune",
+    slug: "neptune",
+    name: "Neptun",
+    commonName: "Lumea vânturilor rapide",
+    family: "Lumi și luni",
+    eyebrow: "Un gigant îndepărtat / a opta orbită",
+    summary:
+      "Neptun este un gigant de gheață albastru, cu vânturi foarte rapide și furtuni care apar și dispar în atmosfera sa dinamică.",
+    body: "Lumina are nevoie de peste patru ore pentru a ajunge de la Soare la Neptun. Culoarea sa profundă vine din compoziția atmosferei, iar norii și petele întunecate se schimbă într-un ritm greu de urmărit de la distanță.",
+    facts: [
+      { label: "Distanța medie", value: "4,5 miliarde km" },
+      { label: "Vânturi", value: "Peste 2.000 km/h" },
+      { label: "Anul neptunian", value: "164,8 ani pământești" },
+      { label: "Tip", value: "Gigant de gheață" },
+    ],
+    scale: "De aproximativ patru ori mai lat decât Pământul",
+    scaleNote:
+      "Modelul este mărit pentru a putea fi observat; culoarea atmosferei este bazată pe date NASA.",
+    visualMode: "Ilustrativ",
+    visualCaption:
+      "Neptun în tonuri albastre, cu detalii atmosferice inspirate de textura NASA/JPL-Caltech.",
+    alt: "Model 3D albastru intens al lui Neptun, cu benzi și nori atmosferici discreți.",
+    color: "#3b75b4",
+    accent: "#9bc4eb",
+    coordinates: { left: "86%", top: "68%", size: "clamp(102px, 13vw, 174px)" },
+    related: ["uranus", "saturn", "andromeda"],
+    source: "NASA · Neptune 3D Model",
+    sourceUrl: "https://science.nasa.gov/resource/neptune-3d-model/",
   }),
   record({
     id: "sirius",
@@ -422,7 +559,7 @@ export const objects: AstroObject[] = [
       coordinates: { left: "9%", top: "17%", size: "clamp(72px, 9vw, 112px)" },
       related: ["saturn", "mars", "scale-in-space"],
       source: "NASA · Date despre Jupiter",
-      sourceUrl: "https://science.nasa.gov/jupiter/jupiter-facts/",
+      sourceUrl: "https://science.nasa.gov/resource/jupiter-3d-model/",
       imageUrl:
         "/manus-storage/Jupiter_and_its_shrunken_Great_Red_Spot_2fdf9f3c.jpg",
       textureUrl:
@@ -470,7 +607,7 @@ export const objects: AstroObject[] = [
       coordinates: { left: "92%", top: "10%", size: "clamp(72px, 9vw, 112px)" },
       related: ["jupiter", "moon", "scale-in-space"],
       source: "NASA · Date despre Saturn",
-      sourceUrl: "https://science.nasa.gov/saturn/facts/",
+      sourceUrl: "https://science.nasa.gov/resource/saturn-3d-model/",
       imageUrl: "/manus-storage/Saturn_during_Equinox_76d6b2d7.jpg",
       textureUrl: "/manus-storage/Saturn_during_Equinox_76d6b2d7.jpg",
       imageCredit: "Colecția furnizată · NASA/JPL/SSI",

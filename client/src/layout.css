@@ -360,6 +360,33 @@ main {
   text-transform: uppercase;
   letter-spacing: 0.08em;
 }
+.hero-planet-switcher {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+.hero-planet-button {
+  padding: 5px 7px;
+  color: #8da098;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(216, 169, 91, 0.16);
+  font:
+    9px "DM Mono",
+    monospace;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition:
+    color 0.18s ease,
+    background 0.18s ease,
+    border-color 0.18s ease;
+}
+.hero-planet-button:hover,
+.hero-planet-button.is-active {
+  color: var(--white);
+  background: rgba(216, 169, 91, 0.18);
+  border-color: rgba(216, 169, 91, 0.7);
+}
 .hero-note {
   width: min(405px, 100%);
   display: flex;
