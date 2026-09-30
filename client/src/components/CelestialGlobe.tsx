@@ -137,6 +137,13 @@ export default function CelestialGlobe({
     const animatedGroups: Array<{ rotation: { y: number } }> = [];
     const profile = planetId ? planetProfiles[planetId] : undefined;
     const modelUrl = planetId ? planetModelUrls[planetId] : undefined;
+    const hasDedicatedDeepSpaceModel = new Set([
+      "sirius",
+      "orion",
+      "orion-nebula",
+      "crab-nebula",
+      "black-hole",
+    ]).has(planetId ?? "");
     const mobileQuality = window.innerWidth < 740;
     const sphereSegments = mobileQuality ? 40 : 64;
     const atmosphereSegments = mobileQuality ? 28 : 48;
@@ -656,7 +663,12 @@ export default function CelestialGlobe({
         }
       }
 
-      if (!modelUrl && globeKind !== "star" && !profile) {
+      if (
+        !modelUrl &&
+        !hasDedicatedDeepSpaceModel &&
+        globeKind !== "star" &&
+        !profile
+      ) {
         const rim = new Mesh(
           addGeometry(
             new SphereGeometry(
