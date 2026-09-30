@@ -124,6 +124,61 @@
 main {
   min-height: 50vh;
 }
+.site-footer {
+  background: var(--navy-deep);
+  color: var(--white);
+  padding: 59px max(7%, calc((100vw - 1260px) / 2)) 22px;
+}
+.footer-grid {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr 0.7fr;
+  gap: 60px;
+  padding-bottom: 57px;
+}
+.footer-note {
+  max-width: 210px;
+  margin: 27px 0 0;
+  color: #81948b;
+  font-size: 12px;
+  line-height: 1.6;
+}
+.footer-copy {
+  max-width: 220px;
+  margin: 0;
+  color: #c4d0c5;
+  font:
+    500 23px/1.25 "Playfair Display",
+    serif;
+}
+.site-footer .eyebrow {
+  color: #72857d;
+}
+.footer-links {
+  display: grid;
+  gap: 13px;
+}
+.footer-links a {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #aebdb3;
+  font-size: 11px;
+}
+.footer-links a:hover {
+  color: var(--brass);
+}
+.footer-bottom {
+  padding-top: 17px;
+  border-top: 1px solid rgba(236, 231, 217, 0.13);
+  display: flex;
+  justify-content: space-between;
+  color: #657a71;
+  font:
+    8px "DM Mono",
+    monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
 .hero-section {
   min-height: 675px;
   display: grid;

@@ -1058,7 +1058,7 @@ export const heroCopy = {
 export const sceneInstruction =
   "Trage de atlas pentru a schimba perspectiva. Selectează un reper pentru a deschide exponatul.";
 export const footerNote =
-  "Creat ca alternativă calmă la panourile generice generate de inteligența artificială.";
+  "Creat ca alternativă calmă la panourile generice și aglomerate.";
 export const aboutContact =
   "Prototipul folosește o colecție demonstrativă atent aleasă; versiunea finală ar adăuga un responsabil editorial și o dată oficială de verificare pentru fiecare înregistrare.";
 export const appMetaDescription =
