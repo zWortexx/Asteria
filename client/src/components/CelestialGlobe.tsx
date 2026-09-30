@@ -163,7 +163,13 @@ export default function CelestialGlobe({
       mount.classList.add("celestial-globe-webgl");
       const group = new Group();
       group.scale.setScalar(
-        size === "hero" ? 0.66 : size === "step" ? 0.78 : 0.76
+        size === "hero" && planetId === "saturn"
+          ? 0.75
+          : size === "hero"
+            ? 0.66
+            : size === "step"
+              ? 0.78
+              : 0.76
       );
       if (planetId === "saturn" && modelUrl) {
         group.rotation.x = Math.PI / 5.4;
