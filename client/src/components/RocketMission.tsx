@@ -21,9 +21,9 @@ type MissionObject = AstroObject & {
 type MissionCategory = NonNullable<AstroObject["mission"]>["category"];
 type MissionPhase = "idle" | "transit" | "arrived";
 
-const missionCategories: MissionCategory[] = ["Planete", "Cer profund"];
+const missionCategories: MissionCategory[] = ["Planete"];
 const destinations = objects.filter(
-  (item): item is MissionObject => item.mission !== undefined
+  (item): item is MissionObject => item.mission?.category === "Planete"
 );
 const starPositions = Array.from({ length: 34 }, (_, index) => ({
   left: `${(index * 37) % 97}%`,
