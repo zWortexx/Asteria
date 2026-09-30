@@ -54,6 +54,7 @@ import {
   methodBullets,
   normalizeText,
   objects,
+  planetObjectIds,
   privacyNote,
   routes,
   sourcePolicy,
@@ -67,9 +68,22 @@ function Library() {
   const [family, setFamily] = useState("Toate");
   const [query, setQuery] = useState("");
   const [saved, setSaved] = useLocalState<string[]>(localSaveKey, []);
-  const filtered = getFamilyObjects(family).filter(item =>
-    getSearchText(item).includes(normalizeText(query.trim()))
-  );
+  const filtered = getFamilyObjects(family)
+    .filter(item => getSearchText(item).includes(normalizeText(query.trim())))
+    .sort((a, b) => {
+      const aRank = planetObjectIds.indexOf(
+        a.id as (typeof planetObjectIds)[number]
+      );
+      const bRank = planetObjectIds.indexOf(
+        b.id as (typeof planetObjectIds)[number]
+      );
+      const aIsPlanet = aRank !== -1;
+      const bIsPlanet = bRank !== -1;
+      if (aIsPlanet && !bIsPlanet) return -1;
+      if (!aIsPlanet && bIsPlanet) return 1;
+      if (aIsPlanet && bIsPlanet) return aRank - bRank;
+      return 0;
+    });
   const eagerLimit =
     typeof window !== "undefined" && window.innerWidth < 740 ? 2 : 4;
   const toggleSave = (item: AstroObject) =>
