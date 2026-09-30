@@ -27,6 +27,40 @@ const atlas3DIds = new Set([
   "andromeda",
 ]);
 const atlasExcludedIds = new Set(["light-travel-time", "scale-in-space"]);
+const atlasLayout: Record<string, { left: string; top: string; size: string }> =
+  {
+    mercury: { left: "8%", top: "16%", size: "clamp(58px, 6.5vw, 72px)" },
+    venus: { left: "24%", top: "16%", size: "clamp(58px, 6.5vw, 72px)" },
+    earth: { left: "40%", top: "16%", size: "clamp(62px, 7vw, 78px)" },
+    mars: { left: "56%", top: "16%", size: "clamp(64px, 7.5vw, 82px)" },
+    jupiter: { left: "72%", top: "16%", size: "clamp(58px, 6.5vw, 72px)" },
+    saturn: { left: "88%", top: "16%", size: "clamp(58px, 6.5vw, 72px)" },
+    moon: { left: "8%", top: "50%", size: "clamp(58px, 6.5vw, 72px)" },
+    uranus: { left: "28%", top: "50%", size: "clamp(58px, 6.5vw, 72px)" },
+    neptune: { left: "48%", top: "50%", size: "clamp(58px, 6.5vw, 72px)" },
+    sirius: { left: "68%", top: "50%", size: "clamp(58px, 6.5vw, 72px)" },
+    orion: { left: "88%", top: "50%", size: "clamp(54px, 6vw, 66px)" },
+    "orion-nebula": {
+      left: "27%",
+      top: "76%",
+      size: "clamp(64px, 7.5vw, 82px)",
+    },
+    andromeda: {
+      left: "50%",
+      top: "76%",
+      size: "clamp(64px, 7.5vw, 82px)",
+    },
+    "crab-nebula": {
+      left: "73%",
+      top: "76%",
+      size: "clamp(64px, 7.5vw, 82px)",
+    },
+    "black-hole": {
+      left: "91%",
+      top: "76%",
+      size: "clamp(56px, 6.5vw, 70px)",
+    },
+  };
 export function SectionIntro({
   kicker,
   title,
@@ -62,6 +96,7 @@ export function ObjectOrb({
   staticView?: boolean;
 }) {
   const isAtlas3D = atlas3DIds.has(item.id);
+  const atlasPosition = atlasLayout[item.id] ?? item.coordinates;
   return (
     <button
       onClick={onClick}
@@ -75,9 +110,9 @@ export function ObjectOrb({
         {
           "--orb-color": item.color,
           "--orb-accent": item.accent,
-          "--orb-left": item.coordinates.left,
-          "--orb-top": item.coordinates.top,
-          "--orb-size": item.coordinates.size,
+          "--orb-left": atlasPosition.left,
+          "--orb-top": atlasPosition.top,
+          "--orb-size": atlasPosition.size,
         } as React.CSSProperties
       }
       aria-label={`Deschide exponatul ${item.name}`}
