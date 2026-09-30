@@ -181,6 +181,27 @@ export default function CelestialGlobe({
       };
 
       if (modelUrl) {
+        const loadingGeometry = addGeometry(
+          new SphereGeometry(
+            1,
+            mobileQuality ? 24 : 32,
+            mobileQuality ? 18 : 24
+          )
+        );
+        const loadingMaterial = addMaterial(
+          new MeshStandardMaterial({
+            color: new Color(
+              profile ? `rgb(${profile.base.join(",")})` : color
+            ),
+            emissive: new Color(
+              profile ? `rgb(${profile.accent.join(",")})` : accent
+            ),
+            emissiveIntensity: 0.08,
+            roughness: 0.84,
+          })
+        );
+        const loadingPlanet = new Mesh(loadingGeometry, loadingMaterial);
+        add(loadingPlanet);
         const { GLTFLoader } = await import(
           "three/examples/jsm/loaders/GLTFLoader.js"
         );
@@ -234,6 +255,7 @@ export default function CelestialGlobe({
                     : preparedMaterials;
               }
             });
+            group.remove(loadingPlanet);
             group.add(model);
             animatedGroups.push(model);
             disposables.push({
