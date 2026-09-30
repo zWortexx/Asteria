@@ -18,6 +18,15 @@ import {
   type AstroObject,
   type AstroRoute,
 } from "../lib/asteria-data";
+
+const atlas3DIds = new Set([
+  "orion",
+  "orion-nebula",
+  "crab-nebula",
+  "sirius",
+  "andromeda",
+]);
+const atlasExcludedIds = new Set(["light-travel-time", "scale-in-space"]);
 export function SectionIntro({
   kicker,
   title,
@@ -52,13 +61,15 @@ export function ObjectOrb({
   onClick?: () => void;
   staticView?: boolean;
 }) {
+  const isAtlas3D = atlas3DIds.has(item.id);
   return (
     <button
       onClick={onClick}
       className={cx(
         "object-orb",
         selected && "is-selected",
-        staticView && "is-static"
+        staticView && "is-static",
+        isAtlas3D && "is-3d"
       )}
       style={
         {
@@ -71,8 +82,22 @@ export function ObjectOrb({
       }
       aria-label={`Deschide exponatul ${item.name}`}
     >
-      <span className="orb-glow" />
-      <span className="orb-body" />
+      {isAtlas3D ? (
+        <CelestialGlobe
+          color={item.color}
+          accent={item.accent}
+          planetId={item.id}
+          globeKind={item.globeKind}
+          motionEnabled={!staticView}
+          size="step"
+          textureAlt={`${item.name}, model 3D`}
+        />
+      ) : (
+        <>
+          <span className="orb-glow" />
+          <span className="orb-body" />
+        </>
+      )}
       <span className="orb-label">
         <b>{item.name}</b>
         <small>{item.family}</small>
@@ -90,7 +115,7 @@ export function Atlas({
   onSelect?: (item: AstroObject) => void;
   staticView?: boolean;
 }) {
-  const markers = objects;
+  const markers = objects.filter(item => !atlasExcludedIds.has(item.id));
   const selectedItem =
     markers.find(item => item.id === selectedId) ?? markers[0];
   const canvasRef = useRef<HTMLDivElement>(null);

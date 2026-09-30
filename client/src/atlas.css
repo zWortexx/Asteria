@@ -134,6 +134,22 @@
   color: var(--white);
   z-index: 2;
 }
+.object-orb.is-3d {
+  z-index: 3;
+}
+.object-orb.is-3d .celestial-globe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+.object-orb.is-3d .celestial-globe-fallback {
+  inset: 18%;
+}
+.object-orb.is-3d .celestial-globe-notice {
+  display: none;
+}
 .orb-body {
   position: absolute;
   inset: 9%;
