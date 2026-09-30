@@ -146,9 +146,9 @@ export const objects: AstroObject[] = [
       meta: "Aterizare pe suprafață",
       arrival:
         "Racheta a stabilizat coborârea. Suprafața este sigură pentru explorare.",
-      sceneImage: "/manus-storage/mars_bbaca3e0.jpg",
+      sceneImage: "/manus-storage/mission-mars_cfb2730d.webp",
       sceneImageAlt:
-        "Ilustrație a unui peisaj marțian roșiatic, cu praf fin și platouri stâncoase la apus.",
+        "Vedere de la nivelul solului spre un peisaj marțian roșiatic, cu praf fin și platouri stâncoase la apus.",
     },
   }),
   record({
@@ -183,6 +183,16 @@ export const objects: AstroObject[] = [
     imageUrl:
       "https://eoimages.gsfc.nasa.gov/images/imagerecords/57000/57730/globe_west_2048.jpg",
     imageCredit: "Observatorul Terestru NASA",
+    mission: {
+      category: "Planete",
+      type: "planet",
+      meta: "Aterizare pe suprafață",
+      arrival:
+        "Racheta a revenit acasă. Atmosfera, oceanele și relieful Pământului se văd sub stratul subțire de nori.",
+      sceneImage: "/manus-storage/mission-earth_b248260e.webp",
+      sceneImageAlt:
+        "Vedere orbitală spre oceanele albastre, continentele și norii albi ai Pământului.",
+    },
   }),
   record({
     id: "moon",
@@ -246,6 +256,16 @@ export const objects: AstroObject[] = [
     related: ["venus", "earth", "mars"],
     source: "NASA · Mercury 3D Model",
     sourceUrl: "https://science.nasa.gov/resource/mercury-3d-model/",
+    mission: {
+      category: "Planete",
+      type: "planet",
+      meta: "Aterizare pe suprafață",
+      arrival:
+        "Racheta a coborât pe terenul craterizat al lui Mercur, unde lumina și umbra schimbă rapid temperatura suprafeței.",
+      sceneImage: "/manus-storage/mission-mercury_4d7f0f3e.webp",
+      sceneImageAlt:
+        "Priveliște de la nivelul solului spre suprafața craterizată și cenușie a planetei Mercur.",
+    },
   }),
   record({
     id: "venus",
@@ -276,6 +296,16 @@ export const objects: AstroObject[] = [
     related: ["mercury", "earth", "mars"],
     source: "NASA · Venus 3D Model",
     sourceUrl: "https://science.nasa.gov/resource/venus-3d-model/",
+    mission: {
+      category: "Planete",
+      type: "planet",
+      meta: "Coborâre în atmosferă",
+      arrival:
+        "Racheta a intrat în atmosfera densă a lui Venus, printre nori de acid sulfuric și lumină aurie filtrată.",
+      sceneImage: "/manus-storage/mission-venus_b4ab043c.webp",
+      sceneImageAlt:
+        "Vedere prin atmosfera aurie și densă a planetei Venus spre nori și relief vulcanic îndepărtat.",
+    },
   }),
   record({
     id: "uranus",
@@ -306,6 +336,16 @@ export const objects: AstroObject[] = [
     related: ["saturn", "neptune", "jupiter"],
     source: "NASA · Uranus 3D Model",
     sourceUrl: "https://science.nasa.gov/resource/uranus-3d-model/",
+    mission: {
+      category: "Planete",
+      type: "planet",
+      meta: "Observare de pe orbită",
+      arrival:
+        "Racheta a ajuns pe orbită în jurul lui Uranus, unde atmosfera cyan și inelele înclinate domină priveliștea.",
+      sceneImage: "/manus-storage/mission-uranus_43840868.webp",
+      sceneImageAlt:
+        "Vedere orbitală spre gigantul de gheață Uranus, albastru-cyan, cu inelele sale subțiri și înclinate.",
+    },
   }),
   record({
     id: "neptune",
@@ -336,6 +376,16 @@ export const objects: AstroObject[] = [
     related: ["uranus", "saturn", "andromeda"],
     source: "NASA · Neptune 3D Model",
     sourceUrl: "https://science.nasa.gov/resource/neptune-3d-model/",
+    mission: {
+      category: "Planete",
+      type: "planet",
+      meta: "Observare de pe orbită",
+      arrival:
+        "Racheta a stabilizat orbita la marginea Sistemului Solar, de unde furtunile albastre ale lui Neptun se văd prin hublou.",
+      sceneImage: "/manus-storage/mission-neptune_5ebd0ca5.webp",
+      sceneImageAlt:
+        "Vedere orbitală spre Neptun, un gigant albastru cu benzi atmosferice și o furtună întunecată.",
+    },
   }),
   record({
     id: "sirius",
@@ -571,7 +621,7 @@ export const objects: AstroObject[] = [
         meta: "Observare din orbită",
         arrival:
           "Racheta a intrat pe o orbită de observație. Atmosfera nu permite o aterizare clasică.",
-        sceneImage: "/manus-storage/jupiter_d51f2d3a.jpg",
+        sceneImage: "/manus-storage/mission-jupiter_633ca681.webp",
         sceneImageAlt:
           "Ilustrație văzută prin hublou spre norii bandați ai lui Jupiter și Marea Pată Roșie.",
       },
@@ -617,7 +667,7 @@ export const objects: AstroObject[] = [
         meta: "Observare de pe orbită",
         arrival:
           "Racheta a ajuns la distanță sigură de inele. Observarea se face de pe orbită.",
-        sceneImage: "/manus-storage/saturn_60a13d8a.jpg",
+        sceneImage: "/manus-storage/mission-saturn_3dec40dd.webp",
         sceneImageAlt:
           "Ilustrație văzută prin hublou spre planeta Saturn și arcul său vast de inele.",
       },

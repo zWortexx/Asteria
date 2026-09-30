@@ -1036,6 +1036,11 @@
 .mission-scene-image.is-unavailable {
   display: none;
 }
+.mission-phase-idle .mission-scene-image,
+.mission-phase-transit .mission-scene-image {
+  opacity: 0;
+  visibility: hidden;
+}
 .mission-scene-fallback {
   position: absolute;
   inset: 0;

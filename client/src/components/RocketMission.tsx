@@ -98,7 +98,7 @@ export default function RocketMission() {
         className={`mission-console mission-phase-${phase} mission-type-${mission.type} ${exploring ? "mission-exploring" : ""}`}
       >
         <div className="mission-sky">
-          {failedImageId === selected.id && (
+          {failedImageId === selected.id && phase === "arrived" && (
             <div
               className="mission-scene-fallback"
               role="img"
@@ -116,7 +116,7 @@ export default function RocketMission() {
             alt={mission.sceneImageAlt}
             width={1600}
             height={900}
-            loading="lazy"
+            loading="eager"
             decoding="async"
             onError={() => setFailedImageId(selected.id)}
           />
