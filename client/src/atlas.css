@@ -339,32 +339,9 @@
 .atlas-selected {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   gap: 20px;
   padding: 24px 22px 0;
-}
-.atlas-selected .eyebrow {
-  margin-bottom: 7px;
-  color: #738c83;
-}
-.atlas-selected h3 {
-  margin: 0;
-  font:
-    500 26px "Playfair Display",
-    serif;
-}
-.atlas-selected h3 span {
-  color: #8b9890;
-  font:
-    italic 16px "Playfair Display",
-    serif;
-}
-.atlas-selected p:not(.eyebrow) {
-  max-width: 620px;
-  margin: 8px 0 0;
-  color: #687971;
-  font-size: 12px;
-  line-height: 1.55;
 }
 .atlas-static .object-orb,
 .atlas-static .atlas-nebula {

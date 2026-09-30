@@ -170,9 +170,6 @@ function Library() {
           </div>
         </div>
         <p>{collectionNote}</p>
-        <Link href="/about" className="text-link">
-          Citește metoda și sursele <ArrowUpRight size={14} />
-        </Link>
       </div>
     </section>
   );

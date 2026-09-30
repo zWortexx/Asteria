@@ -9,8 +9,6 @@ import { prefetchRoute } from "../../lib/route-preload";
 import {
   emptySearchBody,
   emptySearchTitle,
-  footerLinks,
-  footerNote,
   getSearchText,
   navItems,
   normalizeText,
@@ -81,46 +79,6 @@ export function Header({
         </div>
       </div>
     </header>
-  );
-}
-
-export function Footer() {
-  return (
-    <footer className="site-footer">
-      <div className="footer-grid">
-        <div>
-          <Brand />
-          <p className="footer-note">{footerNote}</p>
-        </div>
-        <div>
-          <p className="eyebrow">Pe scurt</p>
-          <p className="footer-copy">
-            Începe cu o întrebare. Pleacă având un loc pe cer.
-          </p>
-        </div>
-        <div>
-          <p className="eyebrow">Navigare</p>
-          <div className="footer-links">
-            {footerLinks.map(item => (
-              <Link
-                key={item.href}
-                href={item.href}
-                onMouseEnter={() => prefetchRoute(item.href)}
-                onFocus={() => prefetchRoute(item.href)}
-              >
-                {item.label}
-                <ArrowUpRight size={13} />
-              </Link>
-            ))}
-          </div>
-        </div>
-      </div>
-      <div className="footer-bottom">
-        <span>© 2026 Asteria</span>
-        <span>Limbaj clar · surse verificate · mișcare opțională</span>
-        <span>Versiunea 1.0</span>
-      </div>
-    </footer>
   );
 }
 
@@ -370,7 +328,6 @@ export function Shell({ children }: { children: React.ReactNode }) {
         onMenu={() => setMenuOpen(true)}
       />
       <main id="main">{children}</main>
-      <Footer />
       {searchOpen && <SearchOverlay onClose={() => setSearchOpen(false)} />}
       {menuOpen && <MobileMenu onClose={() => setMenuOpen(false)} />}
       <Toaster

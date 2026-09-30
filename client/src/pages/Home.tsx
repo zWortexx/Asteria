@@ -148,13 +148,6 @@ function Home() {
           staticView={staticView}
         />
         <div className="atlas-selected">
-          <div>
-            <p className="eyebrow"></p>
-            <h3>
-              {selected.name} <span>{selected.commonName}</span>
-            </h3>
-            <p>{selected.summary}</p>
-          </div>
           <Link
             href={`/object/${selected.slug}`}
             className="button button-dark"

@@ -225,8 +225,8 @@ function ObjectPage({ item }: { item: AstroObject }) {
             >
               {staticView ? <Play size={13} /> : <Pause size={13} />}{" "}
               {staticView
-                ? "Folosește câmpul îmbunătățit"
-                : "Folosește câmpul static"}
+                ? "Folosește Universul"
+                : "Folosește Universul static"}
             </button>
           </div>
           <div className="aside-card related-card">

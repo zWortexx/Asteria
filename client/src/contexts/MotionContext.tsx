@@ -35,9 +35,7 @@ export function MotionProvider({ children }: { children: React.ReactNode }) {
     setStaticModeState(value);
     try {
       localStorage.setItem(localFallbackKey, JSON.stringify(value));
-    } catch {
-      /* storage is optional */
-    }
+    } catch {}
   };
   const value = useMemo(
     () => ({

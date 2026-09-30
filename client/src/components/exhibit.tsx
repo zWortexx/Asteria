@@ -235,12 +235,12 @@ export function Atlas({
   return (
     <section
       className={cx("atlas-wrap", staticView && "atlas-static")}
-      aria-label="Atlas ceresc interactiv"
+      aria-label="Univers ceresc interactiv"
     >
       <div className="atlas-toolbar">
         <span className="atlas-status">
           <span className="status-dot" />{" "}
-          {staticView ? "Câmp static" : "Câmp îmbunătățit"}
+          {staticView ? "Univers static" : "Univers"}
         </span>
         <span className="atlas-toolbar-note">
           {staticView
@@ -313,17 +313,6 @@ export function Atlas({
             {selectedItem.facts[0]?.value ?? selectedItem.eyebrow}
           </strong>
         </div>
-      </div>
-      <div className="atlas-legend">
-        <span>
-          <i className="legend-dot legend-teal" /> Lumi
-        </span>
-        <span>
-          <i className="legend-dot legend-brass" /> Lumină stelară
-        </span>
-        <span>
-          <i className="legend-dot legend-coral" /> Concepte și nori
-        </span>
       </div>
     </section>
   );

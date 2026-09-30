@@ -13,7 +13,6 @@ const RoutesPage = lazy(() => import("./pages/Routes"));
 const RouteDetail = lazy(() => import("./pages/RouteDetail"));
 const Library = lazy(() => import("./pages/Library"));
 const Saved = lazy(() => import("./pages/Saved"));
-const About = lazy(() => import("./pages/About"));
 const ObjectPage = lazy(() => import("./pages/ObjectPage"));
 const NotFoundPage = lazy(() => import("./pages/NotFound"));
 
@@ -40,7 +39,6 @@ function AppRouter() {
         </Route>
         <Route path="/library" component={Library} />
         <Route path="/saved" component={Saved} />
-        <Route path="/about" component={About} />
         <Route path="/object/:slug">
           {params => {
             const item = getObject(params.slug);

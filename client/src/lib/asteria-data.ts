@@ -805,11 +805,6 @@ export const navItems = [
   { href: "/library", label: "Colecție", short: "04" },
   { href: "/saved", label: "Salvate", short: "05" },
 ];
-export const footerLinks = [
-  { href: "/about", label: "Metodă și surse" },
-  { href: "/about#accessibility", label: "Accesibilitate" },
-  { href: "/about#contact", label: "Contact" },
-];
 export const familyAccent: Record<string, string> = {
   "Lumi și luni": "#d8a95b",
   Stele: "#dce6ea",
@@ -910,9 +905,7 @@ export const getPathSlug = (path: string) =>
 export const getSection = (path: string) =>
   path.startsWith("/object")
     ? "Colecție"
-    : path.startsWith("/about")
-      ? "Despre Asteria"
-      : (navItems.find(item => item.href === path)?.label ?? "Explorează");
+    : (navItems.find(item => item.href === path)?.label ?? "Explorează");
 export const objectPath = (slug: string) => `/object/${slug}`;
 export const routePath = (slug: string) => `/routes/${slug}`;
 export const toggleId = (items: string[], id: string) =>
@@ -1056,13 +1049,13 @@ export const heroCopy = {
   editorial: "Nota serii · Marte este o lume de rugină, vânt și apă străveche.",
 };
 export const sceneInstruction =
-  "Trage de atlas pentru a schimba perspectiva. Selectează un reper pentru a deschide exponatul.";
+  "Trage pentru a schimba perspectiva. Selectează un reper pentru a deschide exponatul.";
 export const footerNote =
-  "Creat ca alternativă calmă la panourile generice și aglomerate.";
+  "Creată ca alternativă calmă la panourile generice și aglomerate.";
 export const aboutContact =
   "Prototipul folosește o colecție demonstrativă atent aleasă; versiunea finală ar adăuga un responsabil editorial și o dată oficială de verificare pentru fiecare înregistrare.";
 export const appMetaDescription =
-  "Asteria este un ghid calm și accesibil de astronomie, cu atlas spațial, exponate verifiedOn și trasee ghidate.";
+  "Asteria este un ghid calm și accesibil de astronomie, cu atlas spațial, exponate verificate și trasee ghidate.";
 export const storyPrompts = [
   "Urmărește drumul unei stele căzătoare",
   "Găsește o lume cu vreme",
