@@ -288,13 +288,12 @@ export const ObjectCard = memo(function ObjectCard({
     >
       <div className="card-visual">
         {isPlanetObject(item.id) || item.globeKind ? (
-          <CelestialGlobe
+          <Globe
             color={item.color}
             accent={item.accent}
             planetId={item.id}
             globeKind={item.globeKind}
             motionEnabled={false}
-            lazy
             size="step"
             textureAlt={`${item.name}, model 3D NASA`}
           />
