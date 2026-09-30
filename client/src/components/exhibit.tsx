@@ -4,8 +4,6 @@ import {
   ArrowUpRight,
   Bookmark,
   BookmarkCheck,
-  Pause,
-  Play,
   RotateCcw,
 } from "lucide-react";
 import { memo, useMemo, useRef, useState } from "react";
@@ -87,14 +85,14 @@ export function Atlas({
   selectedId,
   onSelect,
   staticView,
-  onToggleStatic,
 }: {
   selectedId?: string;
   onSelect?: (item: AstroObject) => void;
   staticView?: boolean;
-  onToggleStatic?: () => void;
 }) {
   const markers = objects;
+  const selectedItem =
+    markers.find(item => item.id === selectedId) ?? markers[0];
   const canvasRef = useRef<HTMLDivElement>(null);
   const [offset, setOffset] = useState({ x: 0, y: 0 });
   const dragRef = useRef({
@@ -191,10 +189,6 @@ export function Atlas({
         >
           <RotateCcw size={12} /> Recentrează
         </button>
-        <button className="atlas-toggle" onClick={onToggleStatic}>
-          {staticView ? <Play size={13} /> : <Pause size={13} />}{" "}
-          {staticView ? "Comută la câmp îmbunătățit" : "Oprește mișcarea"}
-        </button>
       </div>
       <div
         ref={canvasRef}
@@ -242,6 +236,19 @@ export function Atlas({
           {sceneInstruction}
         </div>
       </div>
+      <div className="atlas-info-card" aria-live="polite">
+        <div>
+          <p className="eyebrow">Reper selectat · {selectedItem.family}</p>
+          <h3>{selectedItem.name}</h3>
+          <p>{selectedItem.summary}</p>
+        </div>
+        <div className="atlas-info-fact">
+          <span>{selectedItem.facts[0]?.label ?? "Tip"}</span>
+          <strong>
+            {selectedItem.facts[0]?.value ?? selectedItem.eyebrow}
+          </strong>
+        </div>
+      </div>
       <div className="atlas-legend">
         <span>
           <i className="legend-dot legend-teal" /> Lumi
@@ -252,9 +259,6 @@ export function Atlas({
         <span>
           <i className="legend-dot legend-coral" /> Concepte și nori
         </span>
-        <Link href="/about">
-          Cum se citește <ArrowUpRight size={13} />
-        </Link>
       </div>
     </section>
   );

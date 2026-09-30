@@ -20,7 +20,7 @@
 }
 .atlas-pan-layer {
   position: absolute;
-  inset: -150px;
+  inset: -180px;
   transition: transform 0.12s ease-out;
   will-change: transform;
 }
@@ -117,6 +117,10 @@
   min-height: 255px;
 }
 @media (max-width: 740px) {
+  .atlas-pan-layer {
+    inset: -120px;
+  }
+
   .celestial-globe-detail {
     min-height: 330px;
   }

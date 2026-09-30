@@ -146,7 +146,6 @@ function Home() {
           selectedId={selected.id}
           onSelect={item => setSelectedId(item.id)}
           staticView={staticView}
-          onToggleStatic={() => setStaticMode(!staticView)}
         />
         <div className="atlas-selected">
           <div>

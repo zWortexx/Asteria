@@ -38,22 +38,6 @@
   margin-right: auto;
   color: #66817a;
 }
-.atlas-toggle {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  color: #b1c2b8;
-  background: transparent;
-  cursor: pointer;
-  font:
-    9px "DM Mono",
-    monospace;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-}
-.atlas-toggle:hover {
-  color: var(--brass);
-}
 .atlas-canvas {
   height: 500px;
   overflow: hidden;
@@ -247,6 +231,58 @@
   vertical-align: middle;
   margin-right: 8px;
 }
+.atlas-info-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(180px, 0.42fr);
+  gap: 24px;
+  align-items: center;
+  margin: 0 17px;
+  padding: 18px 20px;
+  border-top: 1px solid rgba(157, 201, 190, 0.2);
+  border-bottom: 1px solid rgba(157, 201, 190, 0.12);
+  background: rgba(7, 18, 17, 0.34);
+}
+.atlas-info-card .eyebrow {
+  margin: 0 0 6px;
+  color: #7f9a90;
+}
+.atlas-info-card h3 {
+  margin: 0;
+  color: var(--white);
+  font:
+    500 22px "Playfair Display",
+    serif;
+}
+.atlas-info-card p:not(.eyebrow) {
+  max-width: 660px;
+  margin: 6px 0 0;
+  color: #a7b9af;
+  font-size: 12px;
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}
+.atlas-info-fact {
+  display: grid;
+  gap: 5px;
+  padding-left: 18px;
+  border-left: 1px solid rgba(216, 169, 91, 0.35);
+  color: #7f9a90;
+  font:
+    9px "DM Mono",
+    monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.atlas-info-fact strong {
+  color: #d9e2d8;
+  font-size: 11px;
+  line-height: 1.45;
+  text-transform: none;
+  letter-spacing: 0;
+}
 .atlas-legend {
   display: flex;
   align-items: center;
@@ -263,13 +299,6 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-}
-.atlas-legend a {
-  margin-left: auto;
-  display: inline-flex;
-  gap: 5px;
-  align-items: center;
-  color: #b3c3b9;
 }
 .legend-dot {
   width: 6px;
@@ -322,4 +351,24 @@
 }
 .atlas-static .atlas-canvas:before {
   opacity: 0.18;
+}
+@media (max-width: 740px) {
+  .atlas-info-card {
+    grid-template-columns: 1fr;
+    gap: 14px;
+    margin: 0 12px;
+    padding: 16px;
+  }
+
+  .atlas-info-fact {
+    padding-top: 12px;
+    padding-left: 0;
+    border-top: 1px solid rgba(216, 169, 91, 0.35);
+    border-left: 0;
+  }
+
+  .atlas-legend {
+    flex-wrap: wrap;
+    gap: 10px 16px;
+  }
 }
