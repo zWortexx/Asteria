@@ -33,6 +33,7 @@ import {
   Vector3,
   WebGLRenderer,
 } from "three";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import type { GlobeKind } from "../lib/asteria-data";
 
 type CelestialGlobeProps = {
@@ -211,9 +212,6 @@ export default function CelestialGlobe({
         );
         const loadingPlanet = new Mesh(loadingGeometry, loadingMaterial);
         add(loadingPlanet);
-        const { GLTFLoader } = await import(
-          "three/examples/jsm/loaders/GLTFLoader.js"
-        );
         const loader = new GLTFLoader();
         loader.load(
           modelUrl,
