@@ -193,15 +193,11 @@
 .mission-type-deep-space .mission-target {
   width: 108px;
   height: 108px;
-  background: radial-gradient(
-    circle,
-    #020307 0 38%,
-    #15101b 40% 54%,
-    color-mix(in srgb, var(--mission-accent) 70%, transparent) 60%,
-    transparent 72%
-  );
-  box-shadow: 0 0 45px
-    color-mix(in srgb, var(--mission-accent) 55%, transparent);
+  background: transparent;
+  box-shadow: none;
+}
+.mission-type-deep-space .mission-target-pulse {
+  display: none;
 }
 .mission-phase-transit .mission-target {
   left: 86%;

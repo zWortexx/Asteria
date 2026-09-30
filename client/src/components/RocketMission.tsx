@@ -99,15 +99,17 @@ export default function RocketMission() {
         className={`mission-console mission-phase-${phase} mission-type-${mission.type} ${exploring ? "mission-exploring" : ""}`}
       >
         <div className="mission-sky">
-          {failedImageId === selected.id && phase === "arrived" && (
-            <div
-              className="mission-scene-fallback"
-              aria-hidden="true"
-              style={{
-                background: `radial-gradient(ellipse at 72% 38%, ${selected.accent} 0%, ${selected.color} 44%, #081311 100%)`,
-              }}
-            />
-          )}
+          {failedImageId === selected.id &&
+            phase === "arrived" &&
+            mission.type === "planet" && (
+              <div
+                className="mission-scene-fallback"
+                aria-hidden="true"
+                style={{
+                  background: `radial-gradient(ellipse at 72% 38%, ${selected.accent} 0%, ${selected.color} 44%, #081311 100%)`,
+                }}
+              />
+            )}
           <img
             className={`mission-scene-image${failedImageId === selected.id ? " is-unavailable" : ""}`}
             src={mission.sceneImage}
