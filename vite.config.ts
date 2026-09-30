@@ -84,7 +84,6 @@ export default defineConfig({
       output: {
         manualChunks(id) {
           if (!id.includes("node_modules")) return;
-          if (/[\\/]react(?:-dom)?[\\/]/.test(id)) return "react";
           if (id.includes("/three/") || id.includes("three\\")) return "three";
           return "vendor";
         },
