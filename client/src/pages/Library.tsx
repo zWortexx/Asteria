@@ -70,6 +70,8 @@ function Library() {
   const filtered = getFamilyObjects(family).filter(item =>
     getSearchText(item).includes(normalizeText(query.trim()))
   );
+  const eagerLimit =
+    typeof window !== "undefined" && window.innerWidth < 740 ? 2 : 4;
   const toggleSave = (item: AstroObject) =>
     setSaved(current =>
       current.includes(item.id)
@@ -117,10 +119,11 @@ function Library() {
       </div>
       {filtered.length ? (
         <div className="object-grid object-grid-library">
-          {filtered.map(item => (
+          {filtered.map((item, index) => (
             <ObjectCard
               key={item.id}
               item={item}
+              eager={index < eagerLimit}
               saved={saved.includes(item.id)}
               onToggleSave={toggleSave}
             />

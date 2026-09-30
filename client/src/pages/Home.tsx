@@ -9,7 +9,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import { toast } from "sonner";
-import { LazyCelestialGlobe as CelestialGlobe } from "../components/LazyScene";
+import CelestialGlobe from "../components/CelestialGlobe";
 import { LazyRocketMission as RocketMission } from "../components/LazyScene";
 import { Atlas, ObjectCard, RouteCard } from "../components/exhibit";
 import { useLocalState } from "../hooks/useLocalState";
@@ -105,7 +105,6 @@ function Home() {
                 motionEnabled={!staticView}
                 textureAlt={`${heroPlanet.name}, model 3D NASA interactiv`}
                 size="hero"
-                defer
               />
             </div>
             <div className="hero-card-footer">

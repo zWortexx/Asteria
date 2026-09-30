@@ -9,7 +9,8 @@ import {
   RotateCcw,
 } from "lucide-react";
 import { memo, useMemo, useRef, useState } from "react";
-import { LazyCelestialGlobe as CelestialGlobe } from "./LazyScene";
+import CelestialGlobe from "./CelestialGlobe";
+import { LazyCelestialGlobe } from "./LazyScene";
 import { cx } from "../lib/utils";
 import {
   getRouteObjects,
@@ -263,15 +264,18 @@ export const ObjectCard = memo(function ObjectCard({
   item,
   saved,
   onToggleSave,
+  eager = false,
 }: {
   item: AstroObject;
   saved?: boolean;
   onToggleSave?: (item: AstroObject) => void;
+  eager?: boolean;
 }) {
   const objectIndex = useMemo(
     () => objects.findIndex(entry => entry.id === item.id) + 1,
     [item.id]
   );
+  const Globe = eager ? CelestialGlobe : LazyCelestialGlobe;
   return (
     <article
       className="object-card"
