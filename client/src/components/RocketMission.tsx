@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { objects, type AstroObject } from "../lib/asteria-data";
 import { useMotion } from "../contexts/MotionContext";
+import CelestialGlobe from "./CelestialGlobe";
 import "../mission.css";
 
 type MissionObject = AstroObject & {
@@ -101,14 +102,11 @@ export default function RocketMission() {
           {failedImageId === selected.id && phase === "arrived" && (
             <div
               className="mission-scene-fallback"
-              role="img"
-              aria-label={`Scenă indisponibilă pentru ${selected.name}`}
+              aria-hidden="true"
               style={{
                 background: `radial-gradient(ellipse at 72% 38%, ${selected.accent} 0%, ${selected.color} 44%, #081311 100%)`,
               }}
-            >
-              <span>Scenă indisponibilă</span>
-            </div>
+            />
           )}
           <img
             className={`mission-scene-image${failedImageId === selected.id ? " is-unavailable" : ""}`}
@@ -148,7 +146,20 @@ export default function RocketMission() {
               } as React.CSSProperties
             }
           >
-            <span />
+            {mission.type === "deep-space" ? (
+              <CelestialGlobe
+                color={selected.color}
+                accent={selected.accent}
+                planetId={selected.id}
+                globeKind={selected.globeKind}
+                motionEnabled={motionEnabled}
+                size="step"
+                textureAlt={`Model 3D pentru ${selected.name}`}
+              />
+            ) : (
+              <span />
+            )}
+            <span className="mission-target-pulse" />
             <b>{selected.name}</b>
           </div>
           <div className="mission-rocket" aria-hidden="true">

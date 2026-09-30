@@ -287,7 +287,7 @@ export const ObjectCard = memo(function ObjectCard({
       }
     >
       <div className="card-visual">
-        {isPlanetObject(item.id) ? (
+        {isPlanetObject(item.id) || item.globeKind ? (
           <CelestialGlobe
             color={item.color}
             accent={item.accent}

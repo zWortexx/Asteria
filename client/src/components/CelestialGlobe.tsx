@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import {
+  AdditiveBlending,
   AmbientLight,
   BackSide,
   Box3,
@@ -14,6 +15,8 @@ import {
   HemisphereLight,
   LinearFilter,
   LinearMipmapLinearFilter,
+  Line,
+  LineBasicMaterial,
   Mesh,
   MeshBasicMaterial,
   MeshStandardMaterial,
@@ -284,6 +287,197 @@ export default function CelestialGlobe({
           undefined,
           () => setFallback("Modelul 3D NASA nu s-a putut încărca.")
         );
+      } else if (planetId === "sirius") {
+        const binary = new Group();
+        binary.add(
+          new Mesh(
+            addGeometry(
+              new SphereGeometry(
+                0.46,
+                mobileQuality ? 20 : 32,
+                mobileQuality ? 20 : 32
+              )
+            ),
+            addMaterial(new MeshBasicMaterial({ color: new Color("#d8f2ff") }))
+          )
+        );
+        const companion = new Mesh(
+          addGeometry(
+            new SphereGeometry(
+              0.16,
+              mobileQuality ? 14 : 24,
+              mobileQuality ? 14 : 24
+            )
+          ),
+          addMaterial(new MeshBasicMaterial({ color: new Color("#b8d5ff") }))
+        );
+        companion.position.set(0.74, 0.12, 0);
+        binary.add(companion);
+        const orbit = new Mesh(
+          addGeometry(new RingGeometry(0.66, 0.675, mobileQuality ? 48 : 80)),
+          addMaterial(
+            new MeshBasicMaterial({
+              color: new Color("#b7d7dc"),
+              transparent: true,
+              opacity: 0.5,
+              side: DoubleSide,
+            })
+          )
+        );
+        orbit.rotation.x = Math.PI / 2;
+        binary.add(orbit);
+        add(binary);
+        animatedGroups.push(binary);
+      } else if (planetId === "orion") {
+        const stars = [
+          [0.72, 0.58, 0.05],
+          [0.14, 0.22, 0],
+          [-0.16, -0.12, 0.04],
+          [-0.5, 0.52, -0.03],
+          [0.5, -0.43, 0.02],
+          [-0.42, -0.66, 0],
+        ];
+        const positions = new Float32Array(stars.flat());
+        const geometry = addGeometry(new BufferGeometry());
+        geometry.setAttribute(
+          "position",
+          new Float32BufferAttribute(positions, 3)
+        );
+        add(
+          new Points(
+            geometry,
+            addMaterial(
+              new PointsMaterial({
+                color: new Color("#f2d9a4"),
+                size: mobileQuality ? 0.09 : 0.075,
+                sizeAttenuation: true,
+              })
+            )
+          )
+        );
+        const lineGeometry = addGeometry(new BufferGeometry());
+        lineGeometry.setAttribute(
+          "position",
+          new Float32BufferAttribute(
+            [
+              ...stars[0],
+              ...stars[1],
+              ...stars[1],
+              ...stars[2],
+              ...stars[2],
+              ...stars[3],
+              ...stars[2],
+              ...stars[4],
+              ...stars[4],
+              ...stars[5],
+            ],
+            3
+          )
+        );
+        add(
+          new Line(
+            lineGeometry,
+            addMaterial(
+              new LineBasicMaterial({
+                color: new Color("#d7a55d"),
+                transparent: true,
+                opacity: 0.62,
+              })
+            )
+          )
+        );
+      } else if (planetId === "orion-nebula" || planetId === "crab-nebula") {
+        const isCrab = planetId === "crab-nebula";
+        const cloudPositions: number[] = [];
+        const cloudCount = mobileQuality ? 180 : isCrab ? 420 : 340;
+        for (let index = 0; index < cloudCount; index += 1) {
+          const angle = index * 2.399963;
+          const radius = 0.08 + ((index % 37) / 37) * 0.92;
+          const spread = isCrab ? 0.22 : 0.42;
+          cloudPositions.push(
+            Math.cos(angle) * radius * (isCrab ? 1.22 : 1),
+            Math.sin(index * 1.73) * spread * (1 - radius * 0.35),
+            Math.sin(angle) * radius * (isCrab ? 0.62 : 0.8)
+          );
+        }
+        const cloudGeometry = addGeometry(new BufferGeometry());
+        cloudGeometry.setAttribute(
+          "position",
+          new Float32BufferAttribute(cloudPositions, 3)
+        );
+        add(
+          new Points(
+            cloudGeometry,
+            addMaterial(
+              new PointsMaterial({
+                color: new Color(isCrab ? "#6f9fb2" : "#4d9995"),
+                size: isCrab ? 0.035 : 0.045,
+                transparent: true,
+                opacity: 0.72,
+                blending: AdditiveBlending,
+              })
+            )
+          )
+        );
+        add(
+          new Mesh(
+            addGeometry(
+              new SphereGeometry(
+                isCrab ? 0.16 : 0.2,
+                mobileQuality ? 16 : 24,
+                mobileQuality ? 16 : 24
+              )
+            ),
+            addMaterial(
+              new MeshBasicMaterial({
+                color: new Color(isCrab ? "#ed9c78" : "#da8a69"),
+                transparent: true,
+                opacity: 0.88,
+                blending: AdditiveBlending,
+              })
+            )
+          )
+        );
+      } else if (planetId === "black-hole") {
+        add(
+          new Mesh(
+            addGeometry(new CircleGeometry(0.34, mobileQuality ? 32 : 64)),
+            addMaterial(
+              new MeshBasicMaterial({
+                color: new Color("#010207"),
+                side: DoubleSide,
+              })
+            )
+          )
+        );
+        const disk = new Mesh(
+          addGeometry(new RingGeometry(0.42, 0.96, mobileQuality ? 48 : 96)),
+          addMaterial(
+            new MeshBasicMaterial({
+              color: new Color("#e38d6e"),
+              transparent: true,
+              opacity: 0.8,
+              side: DoubleSide,
+              blending: AdditiveBlending,
+            })
+          )
+        );
+        disk.rotation.x = Math.PI / 2.7;
+        add(disk);
+        const halo = new Mesh(
+          addGeometry(new RingGeometry(0.98, 1.08, mobileQuality ? 48 : 96)),
+          addMaterial(
+            new MeshBasicMaterial({
+              color: new Color("#d8a95b"),
+              transparent: true,
+              opacity: 0.42,
+              side: DoubleSide,
+              blending: AdditiveBlending,
+            })
+          )
+        );
+        halo.rotation.x = Math.PI / 2.7;
+        add(halo);
       } else if (globeKind === "galaxy") {
         const points: number[] = [];
         for (let i = 0; i < (mobileQuality ? 260 : 520); i += 1) {

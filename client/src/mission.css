@@ -163,12 +163,21 @@
     width 0.7s ease,
     height 0.7s ease;
 }
-.mission-target span {
+.mission-target-pulse {
   position: absolute;
   inset: -16px;
   border: 1px solid color-mix(in srgb, var(--mission-accent) 48%, transparent);
   border-radius: 50%;
   animation: mission-target-pulse 2.6s ease-in-out infinite;
+}
+.mission-target .celestial-globe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.mission-target .celestial-globe-fallback {
+  display: none;
 }
 .mission-target b {
   position: absolute;
@@ -900,7 +909,7 @@
 }
 @media (prefers-reduced-motion: reduce) {
   .mission-star,
-  .mission-target span,
+  .mission-target-pulse,
   .rocket-flame,
   .transit-icon {
     animation: none !important;
