@@ -111,7 +111,12 @@ export function Atlas({
   const suppressClickRef = useRef(false);
   const clamp = (value: number) => Math.max(-150, Math.min(150, value));
   const onPointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
-    if (staticView) return;
+    if (
+      staticView ||
+      (event.target instanceof Element && event.target.closest(".object-orb"))
+    ) {
+      return;
+    }
     event.currentTarget.setPointerCapture(event.pointerId);
     dragRef.current = {
       active: true,

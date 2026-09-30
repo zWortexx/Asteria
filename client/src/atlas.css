@@ -161,6 +161,10 @@
     transparent 68%
   );
   opacity: 0.45;
+  pointer-events: none;
+}
+.orb-body {
+  pointer-events: none;
 }
 .object-orb:hover .orb-body,
 .object-orb.is-selected .orb-body {
