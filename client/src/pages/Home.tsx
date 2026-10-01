@@ -109,7 +109,6 @@ function Home() {
             </div>
             <div className="hero-card-footer">
               <span>{heroPlanet.name} · model 3D NASA</span>
-              <span>rotește</span>
             </div>
             <div className="hero-planet-switcher" aria-label="Alege planeta">
               {planets.map(planet => (
