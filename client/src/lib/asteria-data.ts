@@ -180,8 +180,7 @@ export const objects: AstroObject[] = [
     related: ["moon", "mars", "light-travel-time"],
     source: "Observatorul Terestru NASA · Date despre Pământ",
     sourceUrl: "https://science.nasa.gov/learn/heat/resource/earth-3d-model/",
-    imageUrl:
-      "https://eoimages.gsfc.nasa.gov/images/imagerecords/57000/57730/globe_west_2048.jpg",
+    imageUrl: "/manus-storage/mission-earth_b248260e.webp",
     imageCredit: "Observatorul Terestru NASA",
     mission: {
       category: "Planete",
